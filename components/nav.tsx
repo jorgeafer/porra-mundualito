@@ -35,9 +35,10 @@ export default function Nav({ profile }: { profile: Profile | null }) {
               <path d="M3.5 9.5Q12 8 20.5 9.5"/>
               <path d="M3.5 14.5Q12 16 20.5 14.5"/>
             </svg>
-            <span className="font-bold text-white tracking-tight">Porra</span>
+            <span className="font-bold text-white tracking-tight">Porra Kazoñera</span>
           </div>
-          <div className="flex gap-1">
+          {/* Links — solo en desktop; en móvil se usa el bottom nav */}
+          <div className="hidden sm:flex gap-1">
             {links.map(link => (
               <Link
                 key={link.href}

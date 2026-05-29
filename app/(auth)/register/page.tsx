@@ -26,7 +26,7 @@ export default async function RegisterPage({ searchParams }: Props) {
       redirect('/register?error=' + encodeURIComponent(signUpError.message))
     }
 
-    redirect('/partidos')
+    redirect('/home')
   }
 
   return (

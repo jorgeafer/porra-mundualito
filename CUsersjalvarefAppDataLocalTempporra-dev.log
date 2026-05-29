@@ -1,0 +1,254 @@
+
+> porra-mundialito@0.1.0 dev
+> next dev
+
+   ▲ Next.js 15.5.18
+   - Local:        http://localhost:3000
+   - Network:      http://10.150.27.147:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+Attention: Next.js now collects completely anonymous telemetry regarding usage.
+This information is used to shape Next.js' roadmap and prioritize features.
+You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+https://nextjs.org/telemetry
+
+ ○ Compiling /instrumentation ...
+ ✓ Compiled /instrumentation in 2.1s (112 modules)
+ ✓ Ready in 15.9s
+ ○ Compiling /middleware ...
+ ✓ Compiled /middleware in 1130ms (214 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (101kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (231kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+ ○ Compiling /login ...
+ ✓ Compiled /login in 10.1s (725 modules)
+ GET /login 200 in 11071ms
+TypeError: fetch failed
+    at async login (app\(auth)\login\page.tsx:16:23)
+  14 |     const supabase = await createClient()
+  15 |     const username = (formData.get('username') as string).trim().toLowerCase()
+> 16 |     const { error } = await supabase.auth.signInWithPassword({
+     |                       ^
+  17 |       email: `${username}@porra.local`,
+  18 |       password: formData.get('password') as string,
+  19 |     }) {
+  [cause]: [Error: unable to get local issuer certificate] {
+    code: 'UNABLE_TO_GET_ISSUER_CERT_LOCALLY'
+  }
+}
+ GET /login?error=fetch+failed 200 in 114ms
+ POST /login 303 in 760ms
+ GET /login?error=fetch+failed 200 in 49ms
+ GET /login?error=fetch+failed 200 in 42ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 1684ms (721 modules)
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\proyectos\porra-mundualito\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\proyectos\\porra-mundualito\\.next\\routes-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\proyectos\porra-mundualito\.next\server\app\(auth)\login\page.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\proyectos\\porra-mundualito\\.next\\server\\app\\(auth)\\login\\page.js',
+  page: '/login'
+}
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 9.2s (1054 modules)
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\proyectos\porra-mundualito\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\proyectos\\porra-mundualito\\.next\\routes-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\proyectos\porra-mundualito\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\proyectos\\porra-mundualito\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\proyectos\porra-mundualito\.next\server\app\(auth)\login\page.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\proyectos\\porra-mundualito\\.next\\server\\app\\(auth)\\login\\page.js',
+  page: '/login'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\proyectos\porra-mundualito\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\proyectos\\porra-mundualito\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\proyectos\porra-mundualito\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\proyectos\\porra-mundualito\\.next\\routes-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\proyectos\porra-mundualito\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\proyectos\\porra-mundualito\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\proyectos\porra-mundualito\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\proyectos\\porra-mundualito\\.next\\routes-manifest.json'
+}
+ GET /login?error=fetch+failed 500 in 11708ms
+ GET /login?error=fetch+failed 500 in 553ms
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\proyectos\porra-mundualito\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\proyectos\\porra-mundualito\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\proyectos\porra-mundualito\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\proyectos\\porra-mundualito\\.next\\routes-manifest.json'
+}
+ GET /login 500 in 14385ms
+ GET /login 500 in 462ms
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\proyectos\porra-mundualito\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\proyectos\\porra-mundualito\\.next\\routes-manifest.json',
+  page: '/login'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\proyectos\porra-mundualito\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\proyectos\\porra-mundualito\\.next\\routes-manifest.json',
+  page: '/login'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\proyectos\porra-mundualito\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\proyectos\\porra-mundualito\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\proyectos\porra-mundualito\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\proyectos\\porra-mundualito\\.next\\routes-manifest.json',
+  page: '/login'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\proyectos\porra-mundualito\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\proyectos\\porra-mundualito\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\proyectos\porra-mundualito\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\proyectos\\porra-mundualito\\.next\\routes-manifest.json',
+  page: '/login'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\proyectos\porra-mundualito\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\proyectos\\porra-mundualito\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\proyectos\porra-mundualito\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\proyectos\\porra-mundualito\\.next\\routes-manifest.json'
+}
+ GET /login?error=fetch+failed 500 in 3881ms
+ GET /login?error=fetch+failed 500 in 723ms
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\proyectos\porra-mundualito\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\proyectos\\porra-mundualito\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\proyectos\porra-mundualito\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\proyectos\\porra-mundualito\\.next\\routes-manifest.json'
+}
+ POST /login 500 in 2878ms
+ POST /login 500 in 494ms
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\proyectos\porra-mundualito\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\proyectos\\porra-mundualito\\.next\\routes-manifest.json',
+  page: '/login'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\proyectos\porra-mundualito\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\proyectos\\porra-mundualito\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\proyectos\porra-mundualito\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\proyectos\\porra-mundualito\\.next\\routes-manifest.json',
+  page: '/login'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\proyectos\porra-mundualito\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\proyectos\\porra-mundualito\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\proyectos\porra-mundualito\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\proyectos\\porra-mundualito\\.next\\routes-manifest.json'
+}
+ GET /login?error=fetch+failed 500 in 1912ms
+ GET /login?error=fetch+failed 500 in 506ms
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\proyectos\porra-mundualito\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\proyectos\\porra-mundualito\\.next\\routes-manifest.json',
+  page: '/login'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\proyectos\porra-mundualito\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\proyectos\\porra-mundualito\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\proyectos\porra-mundualito\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\proyectos\\porra-mundualito\\.next\\routes-manifest.json',
+  page: '/login'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\proyectos\porra-mundualito\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\proyectos\\porra-mundualito\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\proyectos\porra-mundualito\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\proyectos\\porra-mundualito\\.next\\routes-manifest.json'
+}
+ GET /login?error=fetch+failed 500 in 3155ms
+ GET /login?error=fetch+failed 500 in 419ms

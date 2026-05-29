@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import Nav from '@/components/nav'
+import BottomNav from '@/components/bottom-nav'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
@@ -17,7 +18,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
   return (
     <div className="min-h-screen bg-slate-100">
       <Nav profile={profile} />
-      <main className="max-w-3xl mx-auto px-4 py-7">{children}</main>
+      <main className="max-w-3xl mx-auto px-4 py-7 pb-24 sm:pb-7">{children}</main>
+      <BottomNav profile={profile} />
     </div>
   )
 }

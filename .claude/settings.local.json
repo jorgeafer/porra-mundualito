@@ -16,7 +16,21 @@
       "PowerShell(taskkill /PID 22572 /F 2>$null)",
       "PowerShell(taskkill /PID 30752 /F 2>$null)",
       "PowerShell($output = \"C:\\\\Users\\\\jorge\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-jorge-workspace-porra-mundualito\\\\31e91e94-7446-442f-ab72-a6d629296d92\\\\tasks\\\\bu23ly08g.output\"; $end = \\(Get-Date\\).AddSeconds\\(20\\); while \\(\\(Get-Date\\) -lt $end\\) { Start-Sleep -Seconds 3; $content = Get-Content $output -ErrorAction SilentlyContinue; if \\($content -match \"Ready\"\\) { Write-Output \"SERVER READY\"; $content; break } }; Get-Content $output -ErrorAction SilentlyContinue)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000)",
+      "Bash(npm install *)",
+      "Bash(curl -s -I http://localhost:3000)",
+      "Bash(curl -s --max-time 5 \"https://cxuyllwwniezjpqiulop.supabase.co/rest/v1/\" -w \"\\\\nHTTP %{http_code}\")",
+      "Bash(node -e \"const pkg = require\\('./node_modules/@supabase/supabase-js/package.json'\\); console.log\\('supabase-js:', pkg.version\\)\")",
+      "Bash(node -e \"const pkg = require\\('./node_modules/@supabase/ssr/package.json'\\); console.log\\('supabase/ssr:', pkg.version\\)\")",
+      "Bash(curl -s --max-time 5 \"https://cxuyllwwniezjpqiulop.supabase.co/auth/v1/token?grant_type=password\" -X POST -H \"apikey: sb_publishable_3DDmNdR3GlL7afg6KRwIig_a2ss_WiN\" -H \"Content-Type: application/json\" -d '{\"email\":\"test@porra.local\",\"password\":\"test\"}' -w \"\\\\nHTTP %{http_code}\")",
+      "Bash(Get-Process -Name \"node\" -ErrorAction SilentlyContinue)",
+      "Bash(Stop-Process -Force)",
+      "Bash(pkill -f \"next dev\")",
+      "Bash(curl -s http://localhost:3000/login)",
+      "Bash(curl -s -X POST http://localhost:3000/login -H 'Next-Action: __CMDSUB_OUTPUT__')",
+      "Bash(taskkill //F //IM node.exe)",
+      "Read(//tmp/**)"
     ]
   }
 }
