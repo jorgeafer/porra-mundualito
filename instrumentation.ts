@@ -2,6 +2,11 @@ export async function register() {
   // Solo en el runtime de Node.js (no en Edge)
   if (process.env.NEXT_RUNTIME !== 'nodejs') return
 
+  // Red corporativa con proxy SSL: deshabilitar verificación TLS solo en dev
+  if (process.env.NODE_ENV === 'development') {
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
+  }
+
   const INTERVAL_MS = 5 * 60 * 1000 // 5 minutos
 
   async function runSync() {

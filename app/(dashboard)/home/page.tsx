@@ -1,24 +1,8 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { flagUrlForTeam, translateTeam } from '@/lib/flags'
+import HomeMatchCard from '@/components/home-match-card'
 import type { MatchWithTeams } from '@/types/database'
-
-function formatDate(iso: string) {
-  const utc = iso.endsWith('Z') || /[+-]\d{2}:\d{2}$/.test(iso) ? iso : iso + 'Z'
-  return new Intl.DateTimeFormat('es-ES', {
-    weekday: 'short', day: 'numeric', month: 'short',
-    hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Madrid',
-  }).format(new Date(utc))
-}
-
-function TeamFlag({ name, size = 'md' }: { name: string; size?: 'sm' | 'md' }) {
-  const url = flagUrlForTeam(name)
-  const cls = size === 'sm' ? 'w-7 h-5' : 'w-9 h-6'
-  if (!url) return null
-  // eslint-disable-next-line @next/next/no-img-element
-  return <img src={url} alt={name} className={`${cls} object-cover rounded shadow-sm`} />
-}
 
 type MyPred = { match_id: number; home_score: number | null; away_score: number | null; points: number }
 type AnyPred = { user_id: string; match_id: number; home_score: number | null; away_score: number | null; points: number }
@@ -49,8 +33,8 @@ export default async function LobbyPage() {
   const predMap = new Map<number, MyPred>()
   for (const p of preds.filter(p => p.user_id === user.id)) predMap.set(p.match_id, p)
 
-  const profileMap = new Map<string, string>()
-  for (const p of profiles ?? []) profileMap.set(p.id, p.display_name ?? p.username)
+  const profileNames: Record<string, string> = {}
+  for (const p of profiles ?? []) profileNames[p.id] = p.display_name ?? p.username
 
   // matchId → predicciones de todos los usuarios
   const predsByMatch = new Map<number, AnyPred[]>()
@@ -132,80 +116,19 @@ export default async function LobbyPage() {
           <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Próximos partidos</p>
           <div className="space-y-3">
             {upcomingMatches.map((match, i) => {
-              const pred = predMap.get(match.id)
-              const hasPred = pred?.home_score != null && pred?.away_score != null
-              const isFirst = i === 0
+              const pred = predMap.get(match.id) ?? null
               const matchPreds = predsByMatch.get(match.id) ?? []
               const otherPreds = matchPreds.filter(p => p.user_id !== user.id)
               return (
-                <div
+                <HomeMatchCard
                   key={match.id}
-                  className={`bg-white rounded-2xl shadow-sm ring-1 ring-slate-100 p-4 ${isFirst ? 'ring-1 ring-green-200 border-green-200' : ''}`}
-                >
-                  {isFirst && (
-                    <p className="text-xs font-semibold text-green-600 mb-2">Siguiente</p>
-                  )}
-                  <div className="flex items-center gap-2">
-                    {/* Home team */}
-                    <div className="flex flex-col items-center gap-1 flex-1 min-w-0">
-                      <TeamFlag name={match.home_team.name} size="sm" />
-                      <p className="text-xs font-semibold text-center truncate w-full text-center leading-tight">
-                        {translateTeam(match.home_team.name)}
-                      </p>
-                    </div>
-
-                    {/* Middle: my prediction or VS */}
-                    <div className="flex flex-col items-center shrink-0 px-1 min-w-[72px]">
-                      {hasPred ? (
-                        <div className="flex items-center gap-1">
-                          <span className="w-8 h-8 flex items-center justify-center bg-green-50 border border-green-200 rounded-lg text-sm font-bold text-green-700">
-                            {pred!.home_score}
-                          </span>
-                          <span className="text-gray-300 font-bold text-sm">–</span>
-                          <span className="w-8 h-8 flex items-center justify-center bg-green-50 border border-green-200 rounded-lg text-sm font-bold text-green-700">
-                            {pred!.away_score}
-                          </span>
-                        </div>
-                      ) : (
-                        <span className="text-xs text-gray-300 font-bold tracking-widest">VS</span>
-                      )}
-                      {match.group_name && (
-                        <span className="text-xs text-gray-300 mt-0.5">Gr. {match.group_name}</span>
-                      )}
-                    </div>
-
-                    {/* Away team */}
-                    <div className="flex flex-col items-center gap-1 flex-1 min-w-0">
-                      <TeamFlag name={match.away_team.name} size="sm" />
-                      <p className="text-xs font-semibold text-center truncate w-full text-center leading-tight">
-                        {translateTeam(match.away_team.name)}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Pronósticos de otros */}
-                  {otherPreds.length > 0 && (
-                    <div className="mt-3 pt-2 border-t border-gray-50 flex flex-wrap gap-x-3 gap-y-1">
-                      {otherPreds.map(p => (
-                        <span key={p.user_id} className="text-xs text-gray-500">
-                          <span className="font-medium text-gray-700">{profileMap.get(p.user_id) ?? '?'}</span>
-                          {' '}{p.home_score}–{p.away_score}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-
-                  <div className={`flex items-center justify-between ${otherPreds.length > 0 ? 'mt-2' : 'mt-3 pt-2 border-t border-gray-50'}`}>
-                    <p className="text-xs text-gray-400 capitalize">{formatDate(match.match_date)}</p>
-                    {hasPred ? (
-                      <span className="text-xs text-green-600 font-semibold">✓ Pronosticado</span>
-                    ) : (
-                      <Link href="/partidos" className="bg-emerald-600 text-white text-xs px-3 py-1.5 rounded-xl font-semibold hover:bg-emerald-700">
-                        Pronosticar →
-                      </Link>
-                    )}
-                  </div>
-                </div>
+                  match={match}
+                  prediction={pred}
+                  otherPreds={otherPreds}
+                  profileNames={profileNames}
+                  userId={user.id}
+                  isFirst={i === 0}
+                />
               )
             })}
           </div>

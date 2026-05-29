@@ -28,9 +28,13 @@ export default function Nav({ profile }: { profile: Profile | null }) {
       <div className="max-w-3xl mx-auto px-4 h-14 flex items-center justify-between">
         <div className="flex items-center gap-5">
           <div className="flex items-center gap-2 shrink-0">
-            <div className="w-7 h-7 rounded-lg bg-emerald-500 flex items-center justify-center text-sm leading-none">
-              ⚽
-            </div>
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#34d399" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="9"/>
+              <path d="M12 3C8 6 8 18 12 21"/>
+              <path d="M12 3C16 6 16 18 12 21"/>
+              <path d="M3.5 9.5Q12 8 20.5 9.5"/>
+              <path d="M3.5 14.5Q12 16 20.5 14.5"/>
+            </svg>
             <span className="font-bold text-white tracking-tight">Porra</span>
           </div>
           <div className="flex gap-1">

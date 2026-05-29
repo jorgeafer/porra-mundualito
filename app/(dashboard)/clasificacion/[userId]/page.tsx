@@ -14,6 +14,13 @@ const POINTS_STYLE: Record<number, string> = {
   1: 'bg-green-100 text-green-700 border-green-200',
 }
 
+function formatDate(iso: string) {
+  const utc = iso.endsWith('Z') || /[+-]\d{2}:\d{2}$/.test(iso) ? iso : iso + 'Z'
+  return new Intl.DateTimeFormat('es-ES', {
+    day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Madrid',
+  }).format(new Date(utc))
+}
+
 function Flag({ name }: { name: string }) {
   const url = flagUrlForTeam(name)
   if (!url) return null
@@ -91,6 +98,10 @@ export default async function PlayerProfilePage({ params }: { params: Promise<{ 
     .filter(p => p.match?.status === 'finished')
     .sort((a, b) => new Date(b.match!.match_date).getTime() - new Date(a.match!.match_date).getTime())
 
+  const upcoming = preds
+    .filter(p => p.match?.status !== 'finished')
+    .sort((a, b) => new Date(a.match!.match_date).getTime() - new Date(b.match!.match_date).getTime())
+
   const total = finished.reduce((s, p) => s + p.points, 0)
   const exact = finished.filter(p => p.points === 3).length
   const correct = finished.filter(p => p.points > 0).length
@@ -152,10 +163,53 @@ export default async function PlayerProfilePage({ params }: { params: Promise<{ 
         </div>
       </div>
 
-      {/* Lista de pronósticos */}
+      {/* Próximos pronósticos */}
+      {upcoming.length > 0 && (
+        <div>
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
+            Próximos pronósticos · {upcoming.length}
+          </p>
+          <div className="space-y-2">
+            {upcoming.map(pred => {
+              const m = pred.match!
+              return (
+                <div key={pred.id} className="bg-white rounded-xl border p-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-gray-300 w-10 shrink-0 text-center">
+                      {STAGE_LABELS[m.stage] ?? m.stage}
+                    </span>
+                    <div className="flex items-center gap-1.5 flex-1 min-w-0 justify-end">
+                      <span className="text-xs font-medium truncate">{translateTeam(m.home_team.name)}</span>
+                      <Flag name={m.home_team.name} />
+                    </div>
+                    <div className="flex items-center gap-1 shrink-0">
+                      <span className="w-6 h-6 flex items-center justify-center bg-emerald-50 border border-emerald-200 text-emerald-700 rounded text-xs font-bold">
+                        {pred.home_score}
+                      </span>
+                      <span className="text-gray-300 text-xs">–</span>
+                      <span className="w-6 h-6 flex items-center justify-center bg-emerald-50 border border-emerald-200 text-emerald-700 rounded text-xs font-bold">
+                        {pred.away_score}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1.5 flex-1 min-w-0">
+                      <Flag name={m.away_team.name} />
+                      <span className="text-xs font-medium truncate">{translateTeam(m.away_team.name)}</span>
+                    </div>
+                    <span className="text-xs text-gray-400 shrink-0 whitespace-nowrap hidden sm:block">
+                      {formatDate(m.match_date)}
+                    </span>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Historial de pronósticos */}
       <div>
         <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
-          Pronósticos · {finished.length} partidos
+          Historial · {finished.length} partidos
         </p>
 
         {finished.length === 0 ? (
