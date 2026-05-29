@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import HomeMatchCard from '@/components/home-match-card'
 import type { MatchWithTeams } from '@/types/database'
 
@@ -9,6 +10,7 @@ type AnyPred = { user_id: string; match_id: number; home_score: number | null; a
 
 export default async function LobbyPage() {
   const supabase = await createClient()
+  const admin = createAdminClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
@@ -22,7 +24,7 @@ export default async function LobbyPage() {
     supabase.from('matches')
       .select('*, home_team:teams!home_team_id(*), away_team:teams!away_team_id(*)')
       .order('match_date', { ascending: true }),
-    supabase.from('predictions').select('user_id, match_id, home_score, away_score, points'),
+    admin.from('predictions').select('user_id, match_id, home_score, away_score, points'),
     supabase.from('profiles').select('id, username, display_name'),
   ])
 

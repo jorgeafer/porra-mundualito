@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import RankingHistory from '@/components/ranking-history'
 
 const STAGE_LABELS: Record<string, string> = {
@@ -24,12 +25,13 @@ type RankedPlayer = {
 
 export default async function ClasificacionPage() {
   const supabase = await createClient()
+  const admin = createAdminClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  const { data: profiles } = await supabase.from('profiles').select('id, username, display_name')
+  const { data: profiles } = await admin.from('profiles').select('id, username, display_name')
 
   // Fetch predictions joined with match stage
-  const { data: predictions } = await supabase
+  const { data: predictions } = await admin
     .from('predictions')
     .select('user_id, points, match:matches!match_id(stage, status, match_date)')
 

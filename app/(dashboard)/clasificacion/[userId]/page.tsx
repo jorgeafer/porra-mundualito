@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { flagUrlForTeam, translateTeam } from '@/lib/flags'
 
 const STAGE_LABELS: Record<string, string> = {
@@ -68,6 +69,7 @@ function computeStreaks(preds: PredWithMatch[]) {
 export default async function PlayerProfilePage({ params }: { params: Promise<{ userId: string }> }) {
   const { userId } = await params
   const supabase = await createClient()
+  const admin = createAdminClient()
 
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
@@ -78,8 +80,8 @@ export default async function PlayerProfilePage({ params }: { params: Promise<{ 
     { data: allPredictions },
     { data: allProfiles },
   ] = await Promise.all([
-    supabase.from('profiles').select('*').eq('id', userId).single(),
-    supabase.from('predictions').select(`
+    admin.from('profiles').select('*').eq('id', userId).single(),
+    admin.from('predictions').select(`
       id, home_score, away_score, points,
       match:matches!match_id(
         id, match_date, stage, group_name, home_score, away_score, status,
@@ -87,8 +89,8 @@ export default async function PlayerProfilePage({ params }: { params: Promise<{ 
         away_team:teams!away_team_id(name, code)
       )
     `).eq('user_id', userId),
-    supabase.from('predictions').select('user_id, points'),
-    supabase.from('profiles').select('id'),
+    admin.from('predictions').select('user_id, points'),
+    admin.from('profiles').select('id'),
   ])
 
   if (!profile) notFound()
