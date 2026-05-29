@@ -50,7 +50,7 @@ export default async function LobbyPage() {
   const now = Date.now()
   const in24h = now + 24 * 60 * 60 * 1000
 
-  const upcomingMatches = allMatches.filter(m => m.status === 'scheduled').slice(0, 5)
+  const upcomingMatches = allMatches.filter(m => m.status === 'scheduled').slice(0, 10)
 
   const urgentCount = allMatches.filter(
     m => m.status === 'scheduled' &&
