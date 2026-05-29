@@ -117,7 +117,7 @@ export default async function ClasificacionPage() {
                   <div className={`w-11 h-11 rounded-full flex items-center justify-center text-base font-bold text-white ring-2 ring-slate-300 mb-1 ${leaderboard[1].id === user!.id ? 'bg-emerald-500 ring-emerald-300' : 'bg-slate-400'}`}>
                     {(leaderboard[1].display_name ?? leaderboard[1].username).slice(0, 1).toUpperCase()}
                   </div>
-                  <p className="text-[11px] font-semibold text-slate-700 text-center leading-tight truncate w-full max-w-[72px] group-hover:text-emerald-700">
+                  <p className="text-sm font-semibold text-slate-700 text-center leading-tight truncate w-full max-w-[80px] group-hover:text-emerald-700">
                     {leaderboard[1].display_name ?? leaderboard[1].username}
                     {leaderboard[1].id === user!.id && <span className="text-emerald-600"> (tú)</span>}
                   </p>
@@ -136,7 +136,7 @@ export default async function ClasificacionPage() {
                 <div className={`w-13 h-13 w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold text-white ring-4 ring-amber-300 shadow-md mb-1 ${leaderboard[0].id === user!.id ? 'bg-emerald-500 ring-emerald-300' : 'bg-amber-400'}`}>
                   {(leaderboard[0].display_name ?? leaderboard[0].username).slice(0, 1).toUpperCase()}
                 </div>
-                <p className="text-xs font-bold text-slate-800 text-center leading-tight truncate w-full max-w-[80px] group-hover:text-emerald-700">
+                <p className="text-sm font-bold text-slate-800 text-center leading-tight truncate w-full max-w-[90px] group-hover:text-emerald-700">
                   {leaderboard[0].display_name ?? leaderboard[0].username}
                   {leaderboard[0].id === user!.id && <span className="text-emerald-600"> (tú)</span>}
                 </p>
@@ -155,7 +155,7 @@ export default async function ClasificacionPage() {
                   <div className={`w-11 h-11 rounded-full flex items-center justify-center text-base font-bold text-white ring-2 ring-orange-300 mb-1 ${leaderboard[2].id === user!.id ? 'bg-emerald-500 ring-emerald-300' : 'bg-orange-400'}`}>
                     {(leaderboard[2].display_name ?? leaderboard[2].username).slice(0, 1).toUpperCase()}
                   </div>
-                  <p className="text-[11px] font-semibold text-slate-700 text-center leading-tight truncate w-full max-w-[72px] group-hover:text-emerald-700">
+                  <p className="text-sm font-semibold text-slate-700 text-center leading-tight truncate w-full max-w-[80px] group-hover:text-emerald-700">
                     {leaderboard[2].display_name ?? leaderboard[2].username}
                     {leaderboard[2].id === user!.id && <span className="text-emerald-600"> (tú)</span>}
                   </p>
@@ -175,7 +175,7 @@ export default async function ClasificacionPage() {
                   <div className={`w-11 h-11 rounded-full flex items-center justify-center text-base font-bold text-white ring-2 ring-slate-200 mb-1 ${leaderboard[3].id === user!.id ? 'bg-emerald-500 ring-emerald-300' : 'bg-slate-300'}`}>
                     {(leaderboard[3].display_name ?? leaderboard[3].username).slice(0, 1).toUpperCase()}
                   </div>
-                  <p className="text-[11px] font-semibold text-slate-600 text-center leading-tight truncate w-full max-w-[72px] group-hover:text-emerald-700">
+                  <p className="text-sm font-semibold text-slate-600 text-center leading-tight truncate w-full max-w-[80px] group-hover:text-emerald-700">
                     {leaderboard[3].display_name ?? leaderboard[3].username}
                     {leaderboard[3].id === user!.id && <span className="text-emerald-600"> (tú)</span>}
                   </p>
