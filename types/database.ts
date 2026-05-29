@@ -1,6 +1,6 @@
 export type Json = string | number | boolean | null | { [key: string]: Json } | Json[]
 
-export interface Database {
+export type Database = {
   public: {
     Tables: {
       profiles: {
@@ -26,6 +26,7 @@ export interface Database {
           avatar_url?: string | null
           is_admin?: boolean
         }
+        Relationships: []
       }
       teams: {
         Row: {
@@ -48,6 +49,7 @@ export interface Database {
           flag_emoji?: string | null
           group_name?: string | null
         }
+        Relationships: []
       }
       matches: {
         Row: {
@@ -83,6 +85,22 @@ export interface Database {
           away_score?: number | null
           status?: 'scheduled' | 'live' | 'finished'
         }
+        Relationships: [
+          {
+            foreignKeyName: "matches_home_team_id_fkey"
+            columns: ["home_team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matches_away_team_id_fkey"
+            columns: ["away_team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       predictions: {
         Row: {
@@ -111,7 +129,20 @@ export interface Database {
           points?: number
           updated_at?: string
         }
+        Relationships: []
       }
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      [_ in never]: never
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
     }
   }
 }

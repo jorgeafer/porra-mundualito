@@ -108,8 +108,9 @@ export default async function PlayerProfilePage({ params }: { params: Promise<{ 
   const { best: bestStreak, current: currentStreak } = computeStreaks(preds)
 
   // Rank
+  const allPreds = (allPredictions ?? []) as { user_id: string; points: number }[]
   const pointsByUser: Record<string, number> = {}
-  for (const p of allPredictions ?? []) {
+  for (const p of allPreds) {
     pointsByUser[p.user_id] = (pointsByUser[p.user_id] ?? 0) + p.points
   }
   const sortedPlayers = Object.entries(pointsByUser).sort((a, b) => b[1] - a[1])

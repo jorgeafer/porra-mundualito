@@ -34,7 +34,7 @@ export default async function ClasificacionPage() {
     .select('user_id, points, match:matches!match_id(stage, status, match_date)')
 
   type PredRow = { user_id: string; points: number; match: { stage: string; status: string; match_date: string } | null }
-  const allPreds = (predictions ?? []) as PredRow[]
+  const allPreds = (predictions ?? []) as unknown as PredRow[]
 
   // History data — must be computed before leaderboard to derive rank changes
   const finishedPreds = allPreds
@@ -55,7 +55,7 @@ export default async function ClasificacionPage() {
     const rankAt: Record<string, number> = {}
     const sorted = Object.entries(cumulative).sort((a, b) => b[1] - a[1])
     sorted.forEach(([uid], i) => { rankAt[uid] = i + 1 })
-    historyData.push({ date, ...rankAt })
+    historyData.push({ date, ...rankAt } as { date: string } & Record<string, number>)
   }
 
   const prevSnapshot = historyData.length >= 2 ? historyData[historyData.length - 2] : null

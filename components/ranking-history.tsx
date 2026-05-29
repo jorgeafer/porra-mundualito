@@ -52,10 +52,12 @@ export default function RankingHistory({ data, players, myId, totalPlayers }: Pr
             width={24}
           />
           <Tooltip
-            formatter={(value: number, _name: string, props: { dataKey: string }) =>
-              [`#${value}`, players[props.dataKey] ?? props.dataKey]
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            formatter={(value: unknown, name: unknown, item: any) =>
+              [`#${value}`, players[item?.dataKey] ?? name]
             }
-            labelFormatter={shortDate}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            labelFormatter={(label: any) => shortDate(label)}
             contentStyle={{ fontSize: 12, borderRadius: 8, border: '1px solid #e5e7eb' }}
           />
           <Legend

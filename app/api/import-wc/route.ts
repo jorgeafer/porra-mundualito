@@ -98,10 +98,10 @@ export async function POST() {
           venue: m.ground ?? null,
           home_score: m.score?.ft[0] ?? null,
           away_score: m.score?.ft[1] ?? null,
-          status: m.score ? 'finished' : 'scheduled',
+          status: (m.score ? 'finished' : 'scheduled') as 'scheduled' | 'finished',
         }
       })
-      .filter(Boolean)
+      .filter((m): m is NonNullable<typeof m> => m !== null)
 
     // 4. Asignar group_name a cada equipo a partir de sus partidos de grupo
     const teamGroups: Record<string, string> = {}
