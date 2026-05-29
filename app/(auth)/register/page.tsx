@@ -34,15 +34,8 @@ export default async function RegisterPage({ searchParams }: Props) {
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-slate-800/80 border border-slate-700 mb-4 shadow-xl">
-            <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#34d399" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <circle cx="12" cy="12" r="9"/>
-              <path d="M12 3C8 6 8 18 12 21"/>
-              <path d="M12 3C16 6 16 18 12 21"/>
-              <path d="M3.5 9.5Q12 8 20.5 9.5"/>
-              <path d="M3.5 14.5Q12 16 20.5 14.5"/>
-            </svg>
-          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logoPorra.png" alt="Logo" className="w-16 h-16 rounded-2xl object-cover shadow-xl mb-4" />
           <h1 className="text-2xl font-bold text-white">Porra Kazoñera</h1>
           <p className="text-slate-400 text-sm mt-1">Mundial 2026 · Crea tu cuenta</p>
         </div>
