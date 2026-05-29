@@ -15,9 +15,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
     .single()
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-100">
       <Nav profile={profile} />
-      <main className="max-w-3xl mx-auto px-4 py-8">{children}</main>
+      <main className="max-w-3xl mx-auto px-4 py-7">{children}</main>
     </div>
   )
 }

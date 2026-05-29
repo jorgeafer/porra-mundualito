@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import ResultForm from '@/components/result-form'
+import ImportButton from '@/components/import-button'
 import type { MatchWithTeams } from '@/types/database'
 
 const STAGE_LABELS: Record<string, string> = {
@@ -37,9 +38,14 @@ export default async function ResultadosPage() {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-3xl mx-auto px-4 py-8">
         <h1 className="text-2xl font-bold mb-2">Admin — Resultados</h1>
-        <p className="text-sm text-gray-500 mb-8">
+        <p className="text-sm text-gray-500 mb-4">
           Introduce el marcador final. Los puntos se calcularán automáticamente.
         </p>
+
+        <div className="bg-blue-50 border border-blue-100 rounded-xl px-4 py-3 mb-8">
+          <p className="text-xs font-semibold text-blue-700 uppercase tracking-wide mb-2">Importar datos del Mundial</p>
+          <ImportButton />
+        </div>
 
         {Object.entries(byStage).map(([stage, stageMatches]) => (
           <section key={stage} className="mb-8">

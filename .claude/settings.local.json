@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(curl -s -o /dev/null -w \"login: %{http_code}\\\\n\" http://localhost:3000/login)",
+      "Bash(curl -s -o /dev/null -w \"register: %{http_code}\\\\n\" http://localhost:3000/register)",
+      "Bash(python -c \"import sys,json; data=json.load\\(sys.stdin\\); print\\('pages:', list\\(data.get\\('staticRoutes',[]\\)\\)\\); print\\('dynamic:', [r['page'] for r in data.get\\('dynamicRoutes',[]\\)]\\)\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3001)",
+      "PowerShell(netstat -ano)",
+      "PowerShell(Invoke-WebRequest -Uri \"http://localhost:3001\" -UseBasicParsing -TimeoutSec 10)",
+      "PowerShell(Invoke-WebRequest -Uri \"http://localhost:3001\" -UseBasicParsing -TimeoutSec 60)",
+      "PowerShell(Get-Process -Id 30752)",
+      "PowerShell(Invoke-WebRequest -Uri \"http://[::1]:3001\" -UseBasicParsing -TimeoutSec 30)",
+      "PowerShell(Get-Process -Id 34368 -ErrorAction SilentlyContinue)",
+      "Bash(fuser -k 3000/tcp 3001/tcp)",
+      "PowerShell(taskkill /PID 22572 /F 2>$null)",
+      "PowerShell(taskkill /PID 30752 /F 2>$null)",
+      "PowerShell($output = \"C:\\\\Users\\\\jorge\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-jorge-workspace-porra-mundualito\\\\31e91e94-7446-442f-ab72-a6d629296d92\\\\tasks\\\\bu23ly08g.output\"; $end = \\(Get-Date\\).AddSeconds\\(20\\); while \\(\\(Get-Date\\) -lt $end\\) { Start-Sleep -Seconds 3; $content = Get-Content $output -ErrorAction SilentlyContinue; if \\($content -match \"Ready\"\\) { Write-Output \"SERVER READY\"; $content; break } }; Get-Content $output -ErrorAction SilentlyContinue)",
+      "WebSearch"
+    ]
+  }
+}
