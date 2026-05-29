@@ -7,7 +7,7 @@ export async function register() {
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
   }
 
-  const INTERVAL_MS = 5 * 60 * 1000 // 5 minutos
+  const INTERVAL_MS = 24 * 60 * 60 * 1000 // 24 horas
 
   async function runSync() {
     try {
