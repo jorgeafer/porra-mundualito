@@ -100,60 +100,127 @@ export default async function ClasificacionPage() {
     <div>
       <h1 className="text-2xl font-bold mb-6">Clasificación</h1>
 
-      {/* Tabla */}
-      <div className="bg-white rounded-2xl shadow-sm ring-1 ring-slate-100 overflow-hidden overflow-x-auto">
-        <table className="w-full text-sm min-w-[480px]">
-          <thead className="bg-slate-50 border-b border-slate-100">
-            <tr>
-              <th className="px-4 py-3 text-left font-medium text-slate-400 w-8">#</th>
-              <th className="px-4 py-3 text-left font-medium text-slate-500">Jugador</th>
-              {activeStages.map(s => (
-                <th key={s} className="px-3 py-3 text-center font-medium text-slate-400 text-xs">{STAGE_LABELS[s]}</th>
-              ))}
-              <th className="px-4 py-3 text-center font-medium text-slate-500 hidden sm:table-cell">Exactos</th>
-              <th className="px-4 py-3 text-center font-medium text-slate-500 hidden sm:table-cell">Acertados</th>
-              <th className="px-4 py-3 text-right font-medium text-slate-500">Pts</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-50">
-            {leaderboard.map(entry => (
-              <tr key={entry.id} className={`hover:bg-slate-50 transition-colors ${entry.id === user!.id ? 'bg-emerald-50/60' : ''}`}>
-                <td className="px-4 py-3 text-center">
-                  <div className="flex flex-col items-center leading-tight">
-                    <span className="font-bold text-slate-400">
-                      {entry.rank === 1 ? '🥇' : entry.rank === 2 ? '🥈' : entry.rank === 3 ? '🥉' : entry.rank}
-                    </span>
-                    {entry.rankChange !== null && entry.rankChange !== 0 && (
-                      <span className={`text-xs font-semibold ${entry.rankChange > 0 ? 'text-emerald-500' : 'text-red-400'}`}>
-                        {entry.rankChange > 0 ? `↑${entry.rankChange}` : `↓${Math.abs(entry.rankChange)}`}
-                      </span>
-                    )}
+      {leaderboard.length === 0 && (
+        <p className="text-center text-slate-400 py-10">Nadie ha hecho predicciones aún.</p>
+      )}
+
+      {/* Podio top 4 */}
+      {leaderboard.length > 0 && (
+        <div className="mb-6">
+          <div className="flex items-end justify-center gap-2">
+
+            {/* 2º */}
+            {leaderboard[1] && (
+              <div className="flex flex-col items-center flex-1">
+                <span className="text-xl mb-1">🥈</span>
+                <Link href={`/clasificacion/${leaderboard[1].id}`} className="flex flex-col items-center group mb-2">
+                  <div className={`w-11 h-11 rounded-full flex items-center justify-center text-base font-bold text-white ring-2 ring-slate-300 mb-1 ${leaderboard[1].id === user!.id ? 'bg-emerald-500 ring-emerald-300' : 'bg-slate-400'}`}>
+                    {(leaderboard[1].display_name ?? leaderboard[1].username).slice(0, 1).toUpperCase()}
                   </div>
-                </td>
-                <td className="px-4 py-3 font-medium text-slate-800">
-                  <Link href={`/clasificacion/${entry.id}`} className="hover:text-emerald-700 hover:underline">
-                    {entry.display_name ?? entry.username}
-                  </Link>
-                  {entry.id === user!.id && <span className="ml-1.5 text-xs text-emerald-600 font-normal">(tú)</span>}
-                </td>
-                {activeStages.map(s => (
-                  <td key={s} className="px-3 py-3 text-center text-xs">
-                    {entry.byStage[s]
-                      ? <span className="font-bold text-emerald-700">{entry.byStage[s]}</span>
-                      : <span className="text-slate-200">–</span>}
-                  </td>
-                ))}
-                <td className="px-4 py-3 text-center text-slate-500 hidden sm:table-cell">{entry.exact_scores}</td>
-                <td className="px-4 py-3 text-center text-slate-500 hidden sm:table-cell">{entry.correct_results}</td>
-                <td className="px-4 py-3 text-right font-bold text-emerald-700">{entry.total}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {leaderboard.length === 0 && (
-          <p className="text-center text-slate-400 py-10">Nadie ha hecho predicciones aún.</p>
-        )}
-      </div>
+                  <p className="text-[11px] font-semibold text-slate-700 text-center leading-tight truncate w-full max-w-[72px] group-hover:text-emerald-700">
+                    {leaderboard[1].display_name ?? leaderboard[1].username}
+                    {leaderboard[1].id === user!.id && <span className="text-emerald-600"> (tú)</span>}
+                  </p>
+                </Link>
+                <div className="bg-slate-200 rounded-t-2xl w-full h-20 flex flex-col items-center justify-center">
+                  <span className="text-slate-600 font-bold text-2xl leading-none">{leaderboard[1].total}</span>
+                  <span className="text-slate-400 text-xs font-semibold mt-0.5">pts</span>
+                </div>
+              </div>
+            )}
+
+            {/* 1º */}
+            <div className="flex flex-col items-center flex-1">
+              <span className="text-2xl mb-1">👑</span>
+              <Link href={`/clasificacion/${leaderboard[0].id}`} className="flex flex-col items-center group mb-2">
+                <div className={`w-13 h-13 w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold text-white ring-4 ring-amber-300 shadow-md mb-1 ${leaderboard[0].id === user!.id ? 'bg-emerald-500 ring-emerald-300' : 'bg-amber-400'}`}>
+                  {(leaderboard[0].display_name ?? leaderboard[0].username).slice(0, 1).toUpperCase()}
+                </div>
+                <p className="text-xs font-bold text-slate-800 text-center leading-tight truncate w-full max-w-[80px] group-hover:text-emerald-700">
+                  {leaderboard[0].display_name ?? leaderboard[0].username}
+                  {leaderboard[0].id === user!.id && <span className="text-emerald-600"> (tú)</span>}
+                </p>
+              </Link>
+              <div className="bg-amber-300 rounded-t-2xl w-full h-28 flex flex-col items-center justify-center shadow-sm">
+                <span className="text-white font-bold text-3xl leading-none">{leaderboard[0].total}</span>
+                <span className="text-white/80 text-xs font-semibold mt-0.5">pts</span>
+              </div>
+            </div>
+
+            {/* 3º */}
+            {leaderboard[2] && (
+              <div className="flex flex-col items-center flex-1">
+                <span className="text-xl mb-1">🥉</span>
+                <Link href={`/clasificacion/${leaderboard[2].id}`} className="flex flex-col items-center group mb-2">
+                  <div className={`w-11 h-11 rounded-full flex items-center justify-center text-base font-bold text-white ring-2 ring-orange-300 mb-1 ${leaderboard[2].id === user!.id ? 'bg-emerald-500 ring-emerald-300' : 'bg-orange-400'}`}>
+                    {(leaderboard[2].display_name ?? leaderboard[2].username).slice(0, 1).toUpperCase()}
+                  </div>
+                  <p className="text-[11px] font-semibold text-slate-700 text-center leading-tight truncate w-full max-w-[72px] group-hover:text-emerald-700">
+                    {leaderboard[2].display_name ?? leaderboard[2].username}
+                    {leaderboard[2].id === user!.id && <span className="text-emerald-600"> (tú)</span>}
+                  </p>
+                </Link>
+                <div className="bg-orange-300 rounded-t-2xl w-full h-14 flex flex-col items-center justify-center">
+                  <span className="text-white font-bold text-xl leading-none">{leaderboard[2].total}</span>
+                  <span className="text-white/80 text-xs font-semibold mt-0.5">pts</span>
+                </div>
+              </div>
+            )}
+
+            {/* 4º */}
+            {leaderboard[3] && (
+              <div className="flex flex-col items-center flex-1">
+                <span className="text-xl mb-1">💩</span>
+                <Link href={`/clasificacion/${leaderboard[3].id}`} className="flex flex-col items-center group mb-2">
+                  <div className={`w-11 h-11 rounded-full flex items-center justify-center text-base font-bold text-white ring-2 ring-slate-200 mb-1 ${leaderboard[3].id === user!.id ? 'bg-emerald-500 ring-emerald-300' : 'bg-slate-300'}`}>
+                    {(leaderboard[3].display_name ?? leaderboard[3].username).slice(0, 1).toUpperCase()}
+                  </div>
+                  <p className="text-[11px] font-semibold text-slate-600 text-center leading-tight truncate w-full max-w-[72px] group-hover:text-emerald-700">
+                    {leaderboard[3].display_name ?? leaderboard[3].username}
+                    {leaderboard[3].id === user!.id && <span className="text-emerald-600"> (tú)</span>}
+                  </p>
+                </Link>
+                <div className="bg-slate-200 rounded-t-xl w-full h-10 flex flex-col items-center justify-center">
+                  <span className="text-slate-600 font-bold text-base leading-none">{leaderboard[3].total}</span>
+                  <span className="text-slate-400 text-[10px] font-semibold mt-0.5">pts</span>
+                </div>
+              </div>
+            )}
+
+          </div>
+          {/* Base del podio */}
+          <div className="h-2 bg-slate-200 rounded-b-xl" />
+        </div>
+      )}
+
+      {/* Resto de jugadores (5º en adelante) */}
+      {leaderboard.length > 4 && (
+        <div className="space-y-2 mb-2">
+          {leaderboard.slice(4).map(entry => (
+            <div key={entry.id} className={`bg-white rounded-2xl ring-1 px-4 py-3 flex items-center gap-3 ${entry.id === user!.id ? 'ring-emerald-200 bg-emerald-50/60' : 'ring-slate-100'}`}>
+              <div className="flex flex-col items-center w-7 shrink-0">
+                <span className="font-bold text-slate-400 text-sm leading-tight">{entry.rank}</span>
+                {entry.rankChange !== null && entry.rankChange !== 0 && (
+                  <span className={`text-[10px] font-bold leading-none ${entry.rankChange > 0 ? 'text-emerald-500' : 'text-red-400'}`}>
+                    {entry.rankChange > 0 ? `↑${entry.rankChange}` : `↓${Math.abs(entry.rankChange)}`}
+                  </span>
+                )}
+              </div>
+              <Link href={`/clasificacion/${entry.id}`} className="flex-1 min-w-0 hover:text-emerald-700">
+                <p className="font-medium text-slate-800 text-sm truncate hover:underline">
+                  {entry.display_name ?? entry.username}
+                  {entry.id === user!.id && <span className="ml-1 text-xs text-emerald-600 font-normal">(tú)</span>}
+                </p>
+              </Link>
+              <div className="hidden sm:flex items-center gap-3 text-xs text-slate-400">
+                <span><strong className="text-slate-600">{entry.exact_scores}</strong> exactos</span>
+                <span><strong className="text-slate-600">{entry.correct_results}</strong> correctos</span>
+              </div>
+              <span className="font-bold text-emerald-700 text-sm shrink-0">{entry.total} pts</span>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Gráfica histórico */}
       {historyData.length > 1 && (

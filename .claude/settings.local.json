@@ -30,7 +30,11 @@
       "Bash(curl -s http://localhost:3000/login)",
       "Bash(curl -s -X POST http://localhost:3000/login -H 'Next-Action: __CMDSUB_OUTPUT__')",
       "Bash(taskkill //F //IM node.exe)",
-      "Read(//tmp/**)"
+      "Read(//tmp/**)",
+      "Bash(taskkill //F //IM node.exe 2>&1; sleep 1 && rm -rf .next/cache && nohup npm run dev > /tmp/porra-dev.log 2>&1 & *)"
+    ],
+    "additionalDirectories": [
+      "\\tmp"
     ]
   }
 }
