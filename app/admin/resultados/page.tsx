@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import ResultForm from '@/components/result-form'
 import ImportButton from '@/components/import-button'
+import SyncResultsButton from '@/components/sync-results-button'
 import type { MatchWithTeams } from '@/types/database'
 
 const STAGE_LABELS: Record<string, string> = {
@@ -42,8 +43,15 @@ export default async function ResultadosPage() {
           Introduce el marcador final. Los puntos se calcularán automáticamente.
         </p>
 
+        <div className="bg-emerald-50 border border-emerald-100 rounded-xl px-4 py-3 mb-4">
+          <p className="text-xs font-semibold text-emerald-700 uppercase tracking-wide mb-1">Cargar resultados</p>
+          <p className="text-xs text-emerald-600 mb-3">Actualiza los marcadores de los partidos ya celebrados y recalcula los puntos.</p>
+          <SyncResultsButton />
+        </div>
+
         <div className="bg-blue-50 border border-blue-100 rounded-xl px-4 py-3 mb-8">
-          <p className="text-xs font-semibold text-blue-700 uppercase tracking-wide mb-2">Importar datos del Mundial</p>
+          <p className="text-xs font-semibold text-blue-700 uppercase tracking-wide mb-1">Importar calendario completo</p>
+          <p className="text-xs text-blue-600 mb-3">Reimporta todos los partidos del Mundial desde la API. Borra y recrea el calendario.</p>
           <ImportButton />
         </div>
 
