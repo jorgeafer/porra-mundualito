@@ -50,7 +50,7 @@ export default async function LobbyPage() {
   const now = Date.now()
   const in24h = now + 24 * 60 * 60 * 1000
 
-  const TOURNAMENT_START = new Date('2026-06-08T00:00:00Z').getTime()
+  const TOURNAMENT_START = new Date('2026-06-11T00:00:00Z').getTime()
   const todayUTC = new Date(new Date().toISOString().slice(0, 10) + 'T00:00:00Z').getTime()
   const windowStart = todayUTC < TOURNAMENT_START ? TOURNAMENT_START : todayUTC
   const windowEnd = windowStart + 7 * 24 * 60 * 60 * 1000
