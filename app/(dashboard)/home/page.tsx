@@ -146,15 +146,7 @@ export default async function LobbyPage() {
         </div>
       )}
 
-      {/* Accesos rápidos */}
-      <div className="grid grid-cols-2 gap-3">
-        <Link href="/partidos" className="bg-emerald-600 text-white rounded-2xl shadow-sm p-4 font-semibold text-sm hover:bg-emerald-700 transition-colors text-center">
-          Ver todos los partidos
-        </Link>
-        <Link href="/clasificacion" className="bg-white rounded-2xl shadow-sm ring-1 ring-slate-100 p-4 font-semibold text-sm hover:bg-slate-50 transition-colors text-center text-slate-700">
-          Clasificación
-        </Link>
-      </div>
+
     </div>
   )
 }
