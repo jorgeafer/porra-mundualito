@@ -50,7 +50,16 @@ export default async function LobbyPage() {
   const now = Date.now()
   const in24h = now + 24 * 60 * 60 * 1000
 
-  const upcomingMatches = allMatches.filter(m => m.status === 'scheduled').slice(0, 10)
+  const TOURNAMENT_START = new Date('2026-06-08T00:00:00Z').getTime()
+  const todayUTC = new Date(new Date().toISOString().slice(0, 10) + 'T00:00:00Z').getTime()
+  const windowStart = todayUTC < TOURNAMENT_START ? TOURNAMENT_START : todayUTC
+  const windowEnd = windowStart + 7 * 24 * 60 * 60 * 1000
+
+  const upcomingMatches = allMatches.filter(m => {
+    if (m.status !== 'scheduled') return false
+    const matchTime = new Date(m.match_date).getTime()
+    return matchTime >= windowStart && matchTime < windowEnd
+  })
 
   const urgentCount = allMatches.filter(
     m => m.status === 'scheduled' &&
