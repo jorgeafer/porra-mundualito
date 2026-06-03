@@ -44,6 +44,8 @@ export default function HomeMatchCard({ match, prediction: initialPred, otherPre
   const isLocked = match.status !== 'scheduled' ||
     Date.now() >= new Date(match.match_date).getTime() - LOCK_BEFORE_MS
   const hasPred = pred?.home_score != null && pred?.away_score != null
+  const isFinished = match.status !== 'scheduled'
+  const [showRivals, setShowRivals] = useState(isFinished)
 
   async function handleSave() {
     if (home === '' || away === '') return
@@ -133,13 +135,28 @@ export default function HomeMatchCard({ match, prediction: initialPred, otherPre
 
       {/* Other preds */}
       {otherPreds.length > 0 && !editing && (
-        <div className="mt-3 pt-2 border-t border-gray-50 flex flex-wrap gap-x-3 gap-y-1">
-          {otherPreds.map(p => (
-            <span key={p.user_id} className="text-xs text-gray-500">
-              <span className="font-medium text-gray-700">{profileNames[p.user_id] ?? '?'}</span>
-              {' '}{p.home_score}–{p.away_score}
-            </span>
-          ))}
+        <div className="mt-3 pt-2 border-t border-gray-50">
+          {showRivals ? (
+            <>
+              <div className="flex flex-wrap gap-x-3 gap-y-1 mb-1">
+                {otherPreds.map(p => (
+                  <span key={p.user_id} className="text-xs text-gray-500">
+                    <span className="font-medium text-gray-700">{profileNames[p.user_id] ?? '?'}</span>
+                    {' '}{p.home_score}–{p.away_score}
+                  </span>
+                ))}
+              </div>
+              {!isFinished && (
+                <button onClick={() => setShowRivals(false)} className="text-xs text-gray-400 hover:text-gray-600 underline">
+                  Ocultar
+                </button>
+              )}
+            </>
+          ) : (
+            <button onClick={() => setShowRivals(true)} className="text-xs text-emerald-600 hover:text-emerald-700 underline">
+              Ver pronósticos rivales ({otherPreds.length})
+            </button>
+          )}
         </div>
       )}
 
