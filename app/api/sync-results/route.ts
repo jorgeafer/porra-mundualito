@@ -3,10 +3,13 @@ import { createClient } from '@/lib/supabase/server'
 import { syncResults } from '@/lib/sync-results'
 
 export async function POST(req: NextRequest) {
+  const startedAt = new Date().toISOString()
   // Vercel cron y llamadas automáticas usan Authorization: Bearer <CRON_SECRET>
   const authHeader = req.headers.get('authorization')
   const cronSecret = process.env.CRON_SECRET
   const calledByCron = cronSecret && authHeader === `Bearer ${cronSecret}`
+
+  console.log(`[sync-results] iniciado caller=${calledByCron ? 'cron' : 'manual'} at=${startedAt}`)
 
   if (!calledByCron) {
     // Llamada manual: verificar que el usuario es admin
@@ -27,11 +30,12 @@ export async function POST(req: NextRequest) {
 
   try {
     const report = await syncResults()
-    console.log(`[sync-results] updated=${report.updated} points=${report.pointsRecalculated}`)
+    const elapsed = Date.now() - new Date(startedAt).getTime()
+    console.log(`[sync-results] ok updated=${report.updated} points=${report.pointsRecalculated} elapsed=${elapsed}ms`)
     return NextResponse.json({ ok: true, ...report })
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err)
-    console.error('[sync-results]', message)
+    console.error(`[sync-results] error elapsed=${Date.now() - new Date(startedAt).getTime()}ms message=${message}`)
     return NextResponse.json({ error: message }, { status: 500 })
   }
 }
