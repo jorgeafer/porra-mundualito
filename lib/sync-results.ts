@@ -8,6 +8,28 @@ export interface SyncReport {
   errors: string[]
 }
 
+// Nombres que football-data.org usa de forma distinta a nuestra BD
+const FD_NAME_MAP: Record<string, string> = {
+  'méxico': 'mexico',
+  'korea republic': 'south korea',
+  'ir iran': 'iran',
+  'usa': 'united states',
+  'côte d\'ivoire': 'ivory coast',
+  'china pr': 'china',
+}
+
+function normalize(name: string): string {
+  return name
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')  // elimina acentos
+}
+
+function resolveTeamName(name: string): string {
+  const n = normalize(name)
+  return FD_NAME_MAP[n] ?? n
+}
+
 export async function syncResults(): Promise<SyncReport> {
   const supabase = createAdminClient()
   const report: SyncReport = { updated: 0, pointsRecalculated: 0, errors: [] }
@@ -16,20 +38,24 @@ export async function syncResults(): Promise<SyncReport> {
   const finished = await fetchFinishedMatches()
   if (finished.length === 0) return report
 
-  // 2. Mapa nombre de equipo → id en nuestra BD (con variantes de nombre)
+  // 2. Mapa nombre de equipo → id en nuestra BD
   const { data: teams } = await supabase.from('teams').select('id, name')
   const byName: Record<string, number> = {}
-  for (const t of teams ?? []) byName[t.name.toLowerCase()] = t.id
+  for (const t of teams ?? []) byName[normalize(t.name)] = t.id
 
   for (const m of finished) {
-    // Intentar casar por name, shortName y tla
-    const homeId = byName[m.homeTeam.name.toLowerCase()]
-      ?? byName[m.homeTeam.shortName.toLowerCase()]
-      ?? byName[m.homeTeam.tla.toLowerCase()]
-    const awayId = byName[m.awayTeam.name.toLowerCase()]
-      ?? byName[m.awayTeam.shortName.toLowerCase()]
-      ?? byName[m.awayTeam.tla.toLowerCase()]
-    if (!homeId || !awayId) continue
+    // Intentar casar por name, shortName y tla (normalizando acentos y aplicando alias)
+    const homeId = byName[resolveTeamName(m.homeTeam.name)]
+      ?? byName[resolveTeamName(m.homeTeam.shortName)]
+      ?? byName[resolveTeamName(m.homeTeam.tla)]
+    const awayId = byName[resolveTeamName(m.awayTeam.name)]
+      ?? byName[resolveTeamName(m.awayTeam.shortName)]
+      ?? byName[resolveTeamName(m.awayTeam.tla)]
+
+    if (!homeId || !awayId) {
+      console.warn(`[sync-results] equipo no encontrado: "${m.homeTeam.name}" o "${m.awayTeam.name}"`)
+      continue
+    }
 
     const homeScore = m.score.fullTime.home!
     const awayScore = m.score.fullTime.away!
