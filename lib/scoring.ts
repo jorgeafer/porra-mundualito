@@ -5,7 +5,7 @@ export type ScoringConfig = {
 }
 
 export const DEFAULT_SCORING: ScoringConfig = {
-  exact_score: 3,
+  exact_score: 4,
   correct_diff: 2,
   correct_result: 1,
 }
@@ -23,6 +23,8 @@ export function calculatePoints(
   const actualDiff = actual.home - actual.away
 
   if (predictedDiff === actualDiff) {
+    // Empate acertado pero no el marcador exacto → solo 1 punto
+    if (actualDiff === 0) return config.correct_result
     return config.correct_diff
   }
 
