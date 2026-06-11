@@ -1,5 +1,5 @@
 import { createAdminClient } from './supabase/admin'
-import { fetchOFMatches, isQualifierCode } from './openfootball'
+import { fetchFinishedMatches } from './football-data'
 import { calculatePoints } from './scoring'
 
 export interface SyncReport {
@@ -12,25 +12,27 @@ export async function syncResults(): Promise<SyncReport> {
   const supabase = createAdminClient()
   const report: SyncReport = { updated: 0, pointsRecalculated: 0, errors: [] }
 
-  // 1. Obtener partidos con resultado de OpenFootball
-  const ofMatches = await fetchOFMatches()
-  const finished = ofMatches.filter(
-    m => m.score && !isQualifierCode(m.team1) && !isQualifierCode(m.team2)
-  )
+  // 1. Obtener partidos terminados de football-data.org
+  const finished = await fetchFinishedMatches()
   if (finished.length === 0) return report
 
-  // 2. Mapa nombre de equipo → id en nuestra BD
+  // 2. Mapa nombre de equipo → id en nuestra BD (con variantes de nombre)
   const { data: teams } = await supabase.from('teams').select('id, name')
   const byName: Record<string, number> = {}
   for (const t of teams ?? []) byName[t.name.toLowerCase()] = t.id
 
   for (const m of finished) {
-    const homeId = byName[m.team1.toLowerCase()]
-    const awayId = byName[m.team2.toLowerCase()]
+    // Intentar casar por name, shortName y tla
+    const homeId = byName[m.homeTeam.name.toLowerCase()]
+      ?? byName[m.homeTeam.shortName.toLowerCase()]
+      ?? byName[m.homeTeam.tla.toLowerCase()]
+    const awayId = byName[m.awayTeam.name.toLowerCase()]
+      ?? byName[m.awayTeam.shortName.toLowerCase()]
+      ?? byName[m.awayTeam.tla.toLowerCase()]
     if (!homeId || !awayId) continue
 
-    const homeScore = m.score!.ft[0]
-    const awayScore = m.score!.ft[1]
+    const homeScore = m.score.fullTime.home!
+    const awayScore = m.score.fullTime.away!
 
     // 3. Buscar el partido en BD
     const { data: match } = await supabase
@@ -52,7 +54,7 @@ export async function syncResults(): Promise<SyncReport> {
       .eq('id', match.id)
 
     if (updateError) {
-      report.errors.push(`${m.team1} vs ${m.team2}: ${updateError.message}`)
+      report.errors.push(`${m.homeTeam.name} vs ${m.awayTeam.name}: ${updateError.message}`)
       continue
     }
     report.updated++
