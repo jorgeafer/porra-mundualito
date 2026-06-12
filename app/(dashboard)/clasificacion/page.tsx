@@ -69,7 +69,7 @@ export default async function ClasificacionPage() {
     const cur = statsByUser.get(p.user_id) ?? { total: 0, correct: 0, exact: 0, byStage: {} }
     cur.total += p.points
     if (p.points > 0) cur.correct++
-    if (p.points === 4) cur.exact++
+    if (p.points === 3) cur.exact++
     cur.byStage[match.stage] = (cur.byStage[match.stage] ?? 0) + p.points
     statsByUser.set(p.user_id, cur)
   }
@@ -233,7 +233,7 @@ export default async function ClasificacionPage() {
       {/* Leyenda */}
       <div className="mt-6 bg-white rounded-2xl shadow-sm ring-1 ring-slate-100 p-4 text-xs text-slate-500 space-y-1.5">
         <p className="font-semibold text-slate-700 mb-2">Sistema de puntuación</p>
-        <p><span className="inline-block w-4">🎯</span> Marcador exacto → <strong className="text-amber-700">4 puntos</strong></p>
+        <p><span className="inline-block w-4">🎯</span> Marcador exacto → <strong className="text-amber-700">3 puntos</strong></p>
         <p><span className="inline-block w-4">✅</span> Resultado correcto (1X2) → <strong className="text-emerald-700">1 punto</strong></p>
       </div>
     </div>

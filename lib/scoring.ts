@@ -4,7 +4,7 @@ export type ScoringConfig = {
 }
 
 export const DEFAULT_SCORING: ScoringConfig = {
-  exact_score: 4,
+  exact_score: 3,
   correct_result: 1,
 }
 
