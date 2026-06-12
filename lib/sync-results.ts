@@ -9,15 +9,15 @@ export interface SyncReport {
 }
 
 // Nombres que football-data.org usa de forma distinta a nuestra BD
+// Los valores deben coincidir con normalize(nombre en BD)
 const FD_NAME_MAP: Record<string, string> = {
   // América
-  'mexico': 'mexico',           // normalización de acento cubre "México"
   'usa': 'united states',
   // Europa
   'czechia': 'czech republic',
   'republic of ireland': 'ireland',
-  'bosnia-herzegovina': 'bosnia and herzegovina',
-  'north macedonia': 'north macedonia',
+  'bosnia and herzegovina': 'bosnia & herzegovina',
+  'bosnia-herzegovina': 'bosnia & herzegovina',
   // Asia
   'korea republic': 'south korea',
   'ir iran': 'iran',
@@ -64,7 +64,9 @@ export async function syncResults(): Promise<SyncReport> {
       ?? byName[resolveTeamName(m.awayTeam.tla)]
 
     if (!homeId || !awayId) {
-      console.warn(`[sync-results] equipo no encontrado: "${m.homeTeam.name}" o "${m.awayTeam.name}"`)
+      const hResolved = resolveTeamName(m.homeTeam.name)
+      const aResolved = resolveTeamName(m.awayTeam.name)
+      console.warn(`[sync-results] equipo no encontrado — home: "${m.homeTeam.name}" (→"${hResolved}") away: "${m.awayTeam.name}" (→"${aResolved}")`)
       continue
     }
 
