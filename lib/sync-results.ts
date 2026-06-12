@@ -10,12 +10,23 @@ export interface SyncReport {
 
 // Nombres que football-data.org usa de forma distinta a nuestra BD
 const FD_NAME_MAP: Record<string, string> = {
-  'méxico': 'mexico',
+  // América
+  'mexico': 'mexico',           // normalización de acento cubre "México"
+  'usa': 'united states',
+  // Europa
+  'czechia': 'czech republic',
+  'republic of ireland': 'ireland',
+  'bosnia-herzegovina': 'bosnia and herzegovina',
+  'north macedonia': 'north macedonia',
+  // Asia
   'korea republic': 'south korea',
   'ir iran': 'iran',
-  'usa': 'united states',
-  'côte d\'ivoire': 'ivory coast',
   'china pr': 'china',
+  'united arab emirates': 'uae',
+  // África
+  "cote d'ivoire": 'ivory coast',
+  'congo dr': 'dr congo',
+  'democratic republic of congo': 'dr congo',
 }
 
 function normalize(name: string): string {
