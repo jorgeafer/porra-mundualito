@@ -1,12 +1,10 @@
 export type ScoringConfig = {
   exact_score: number    // acertar marcador exacto
-  correct_diff: number   // acertar diferencia pero no el marcador
-  correct_result: number // acertar resultado (1X2) pero no la diferencia
+  correct_result: number // acertar resultado (1X2)
 }
 
 export const DEFAULT_SCORING: ScoringConfig = {
   exact_score: 4,
-  correct_diff: 2,
   correct_result: 1,
 }
 
@@ -19,16 +17,10 @@ export function calculatePoints(
     return config.exact_score
   }
 
-  const predictedDiff = predicted.home - predicted.away
-  const actualDiff = actual.home - actual.away
+  const predictedSign = Math.sign(predicted.home - predicted.away)
+  const actualSign = Math.sign(actual.home - actual.away)
 
-  if (predictedDiff === actualDiff) {
-    // Empate acertado pero no el marcador exacto → solo 1 punto
-    if (actualDiff === 0) return config.correct_result
-    return config.correct_diff
-  }
-
-  if (Math.sign(predictedDiff) === Math.sign(actualDiff)) {
+  if (predictedSign === actualSign) {
     return config.correct_result
   }
 

@@ -234,8 +234,6 @@ export default async function ClasificacionPage() {
       <div className="mt-6 bg-white rounded-2xl shadow-sm ring-1 ring-slate-100 p-4 text-xs text-slate-500 space-y-1.5">
         <p className="font-semibold text-slate-700 mb-2">Sistema de puntuación</p>
         <p><span className="inline-block w-4">🎯</span> Marcador exacto → <strong className="text-amber-700">4 puntos</strong></p>
-        <p><span className="inline-block w-4">↔️</span> Diferencia de goles correcta → <strong className="text-sky-700">2 puntos</strong></p>
-        <p><span className="inline-block w-4">🤝</span> Empate acertado (no exacto) → <strong className="text-emerald-700">1 punto</strong></p>
         <p><span className="inline-block w-4">✅</span> Resultado correcto (1X2) → <strong className="text-emerald-700">1 punto</strong></p>
       </div>
     </div>
