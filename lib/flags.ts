@@ -7,7 +7,7 @@ const SPECIAL: Record<string, string> = {
 
 // Nombre de equipo → código ISO 3166-1 alpha-2
 const ISO2: Record<string, string> = {
-  'Mexico': 'MX', 'United States': 'US', 'Canada': 'CA',
+  'Mexico': 'MX', 'México': 'MX', 'United States': 'US', 'USA': 'US', 'Canada': 'CA',
   'Brazil': 'BR', 'Argentina': 'AR', 'Uruguay': 'UY', 'Colombia': 'CO',
   'Ecuador': 'EC', 'Chile': 'CL', 'Peru': 'PE', 'Paraguay': 'PY',
   'Venezuela': 'VE', 'Bolivia': 'BO', 'Suriname': 'SR',
@@ -17,7 +17,7 @@ const ISO2: Record<string, string> = {
   'Ukraine': 'UA', 'Hungary': 'HU', 'Denmark': 'DK', 'Sweden': 'SE',
   'Norway': 'NO', 'Czech Republic': 'CZ', 'Slovakia': 'SK', 'Romania': 'RO',
   'Greece': 'GR', 'Albania': 'AL', 'North Macedonia': 'MK', 'Slovenia': 'SI',
-  'Bosnia and Herzegovina': 'BA', 'Montenegro': 'ME', 'Georgia': 'GE',
+  'Bosnia and Herzegovina': 'BA', 'Bosnia & Herzegovina': 'BA', 'Montenegro': 'ME', 'Georgia': 'GE',
   'Finland': 'FI', 'Iceland': 'IS', 'Ireland': 'IE', 'Israel': 'IL',
   'Luxembourg': 'LU', 'Moldova': 'MD', 'Armenia': 'AM', 'Azerbaijan': 'AZ',
   'Kazakhstan': 'KZ', 'Uzbekistan': 'UZ',
@@ -42,13 +42,15 @@ const ISO2: Record<string, string> = {
   'Costa Rica': 'CR', 'Panama': 'PA', 'Jamaica': 'JM', 'Honduras': 'HN',
   'Guatemala': 'GT', 'El Salvador': 'SV', 'Haiti': 'HT', 'Cuba': 'CU',
   'Trinidad and Tobago': 'TT', 'Dominican Republic': 'DO',
-  'Nicaragua': 'NI', 'Curacao': 'CW',
+  'Nicaragua': 'NI', 'Curacao': 'CW', 'Curaçao': 'CW',
 }
 
 // Inglés → Español
 const ES: Record<string, string> = {
   'Mexico': 'México',
+  'México': 'México',
   'United States': 'Estados Unidos',
+  'USA': 'Estados Unidos',
   'Brazil': 'Brasil',
   'France': 'Francia',
   'Germany': 'Alemania',
@@ -70,6 +72,7 @@ const ES: Record<string, string> = {
   'Greece': 'Grecia',
   'North Macedonia': 'Macedonia del Norte',
   'Bosnia and Herzegovina': 'Bosnia y Herzegovina',
+  'Bosnia & Herzegovina': 'Bosnia y Herzegovina',
   'Finland': 'Finlandia',
   'Iceland': 'Islandia',
   'Ireland': 'Irlanda',
