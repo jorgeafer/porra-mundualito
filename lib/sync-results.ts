@@ -12,7 +12,7 @@ export interface SyncReport {
 // Los valores deben coincidir con normalize(nombre en BD)
 const FD_NAME_MAP: Record<string, string> = {
   // América
-  'usa': 'united states',
+  'united states': 'usa',
   // Europa
   'czechia': 'czech republic',
   'republic of ireland': 'ireland',
