@@ -70,18 +70,35 @@ export async function syncResults(): Promise<SyncReport> {
       continue
     }
 
-    const homeScore = m.score.fullTime.home!
-    const awayScore = m.score.fullTime.away!
+    let homeScore = m.score.fullTime.home!
+    let awayScore = m.score.fullTime.away!
 
-    // 3. Buscar el partido en BD
-    const { data: match } = await supabase
+    // 3. Buscar el partido en BD — probar orden normal y luego invertido
+    let { data: match } = await supabase
       .from('matches')
       .select('id, home_score, away_score, status')
       .eq('home_team_id', homeId)
       .eq('away_team_id', awayId)
       .single()
 
-    if (!match) continue
+    if (!match) {
+      // Probar con equipos invertidos (football-data.org puede tener el orden opuesto)
+      const { data: reversed } = await supabase
+        .from('matches')
+        .select('id, home_score, away_score, status')
+        .eq('home_team_id', awayId)
+        .eq('away_team_id', homeId)
+        .single()
+      if (reversed) {
+        match = reversed
+        ;[homeScore, awayScore] = [awayScore, homeScore]
+      }
+    }
+
+    if (!match) {
+      console.warn(`[sync-results] partido no encontrado en BD: "${m.homeTeam.name}" vs "${m.awayTeam.name}"`)
+      continue
+    }
 
     // Saltar si ya tiene el resultado correcto
     if (match.status === 'finished' && match.home_score === homeScore && match.away_score === awayScore) continue

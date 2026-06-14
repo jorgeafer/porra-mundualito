@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { calculatePoints } from '@/lib/scoring'
 
 export async function POST(request: Request) {
@@ -18,7 +19,9 @@ export async function POST(request: Request) {
 
   const { match_id, home_score, away_score } = await request.json()
 
-  const { data: predictions } = await supabase
+  // Usar admin client para leer y actualizar predicciones de todos los usuarios (bypass RLS)
+  const admin = createAdminClient()
+  const { data: predictions } = await admin
     .from('predictions')
     .select('*')
     .eq('match_id', match_id)
@@ -34,7 +37,7 @@ export async function POST(request: Request) {
   }))
 
   for (const { id, points } of updates) {
-    await supabase.from('predictions').update({ points }).eq('id', id)
+    await admin.from('predictions').update({ points }).eq('id', id)
   }
 
   return NextResponse.json({ ok: true, updated: updates.length })
