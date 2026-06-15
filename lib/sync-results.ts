@@ -100,22 +100,22 @@ export async function syncResults(): Promise<SyncReport> {
       continue
     }
 
-    // Saltar si ya tiene el resultado correcto
-    if (match.status === 'finished' && match.home_score === homeScore && match.away_score === awayScore) continue
+    // 4. Actualizar resultado solo si ha cambiado
+    const alreadyCorrect = match.status === 'finished' && match.home_score === homeScore && match.away_score === awayScore
+    if (!alreadyCorrect) {
+      const { error: updateError } = await supabase
+        .from('matches')
+        .update({ home_score: homeScore, away_score: awayScore, status: 'finished' })
+        .eq('id', match.id)
 
-    // 4. Actualizar resultado
-    const { error: updateError } = await supabase
-      .from('matches')
-      .update({ home_score: homeScore, away_score: awayScore, status: 'finished' })
-      .eq('id', match.id)
-
-    if (updateError) {
-      report.errors.push(`${m.homeTeam.name} vs ${m.awayTeam.name}: ${updateError.message}`)
-      continue
+      if (updateError) {
+        report.errors.push(`${m.homeTeam.name} vs ${m.awayTeam.name}: ${updateError.message}`)
+        continue
+      }
+      report.updated++
     }
-    report.updated++
 
-    // 5. Recalcular puntos de todas las predicciones de este partido
+    // 5. Recalcular puntos siempre (cubre casos donde el resultado ya estaba pero los puntos no)
     const { data: predictions } = await supabase
       .from('predictions')
       .select('id, home_score, away_score')
