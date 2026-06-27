@@ -116,7 +116,7 @@ export async function POST() {
     // 5. Borrar partidos con equipos sin nombre real (códigos de clasificación como W74, L3)
     const { data: allTeamsInDB } = await supabase.from('teams').select('id, name')
     const qualifierTeamIds = (allTeamsInDB ?? [])
-      .filter(t => /^[WL]\d+$/.test(t.name))
+      .filter(t => /^\d[A-Z](\/[A-Z])*$/.test(t.name))  // e.g. 2A, 1B, 3A/B/C/D/F
       .map(t => t.id)
 
     if (qualifierTeamIds.length > 0) {
