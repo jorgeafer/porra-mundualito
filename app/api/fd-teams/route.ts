@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { fetchFinishedMatches } from '@/lib/football-data'
+import { fetchAllWCMatches, filterKnownMatches, FD_NAME_MAP, normalize } from '@/lib/football-data'
 import { createAdminClient } from '@/lib/supabase/admin'
 
 export async function GET(req: NextRequest) {
@@ -20,22 +20,37 @@ export async function GET(req: NextRequest) {
   const { data: teams } = await admin.from('teams').select('name')
   const dbNames = new Set((teams ?? []).map(t => t.name.toLowerCase()))
 
-  const matches = await fetchFinishedMatches()
+  const allMatches = await fetchAllWCMatches()
+  const knownMatches = filterKnownMatches(allMatches)
 
-  const fdNames = new Map<string, { name: string | null; shortName: string | null; tla: string | null }>()
-  for (const m of matches) {
-    if (m.homeTeam.name) fdNames.set(m.homeTeam.name, m.homeTeam)
-    if (m.awayTeam.name) fdNames.set(m.awayTeam.name, m.awayTeam)
+  const fdNames = new Map<string, { name: string; shortName: string; tla: string }>()
+  for (const m of knownMatches) {
+    fdNames.set(m.homeTeam.name, m.homeTeam)
+    fdNames.set(m.awayTeam.name, m.awayTeam)
   }
 
-  const result = [...fdNames.values()].map(t => ({
-    fd_name: t.name,
-    fd_shortName: t.shortName,
-    fd_tla: t.tla,
-    found_in_db: (t.name ? dbNames.has(t.name.toLowerCase()) : false)
-      || (t.shortName ? dbNames.has(t.shortName.toLowerCase()) : false)
-      || (t.tla ? dbNames.has(t.tla.toLowerCase()) : false),
-  })).sort((a, b) => Number(a.found_in_db) - Number(b.found_in_db))
+  // Also show how many TBD matches were skipped
+  const tbdCount = allMatches.length - knownMatches.length
 
-  return NextResponse.json({ total: result.length, teams: result })
+  const result = [...fdNames.values()].map(t => {
+    const mapped = FD_NAME_MAP[normalize(t.name)]
+    const resolvedName = mapped ?? normalize(t.name)
+    return {
+      fd_name: t.name,
+      fd_shortName: t.shortName,
+      fd_tla: t.tla,
+      mapped_to: mapped ?? null,
+      found_in_db: dbNames.has(resolvedName)
+        || dbNames.has(normalize(t.shortName))
+        || dbNames.has(normalize(t.tla)),
+    }
+  }).sort((a, b) => Number(a.found_in_db) - Number(b.found_in_db))
+
+  return NextResponse.json({
+    total_matches: allMatches.length,
+    known_matches: knownMatches.length,
+    tbd_skipped: tbdCount,
+    total_teams: result.length,
+    teams: result,
+  })
 }
