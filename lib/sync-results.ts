@@ -1,44 +1,11 @@
 import { createAdminClient } from './supabase/admin'
-import { fetchFinishedMatches } from './football-data'
+import { fetchFinishedMatches, resolveTeamName } from './football-data'
 import { calculatePoints } from './scoring'
 
 export interface SyncReport {
   updated: number
   pointsRecalculated: number
   errors: string[]
-}
-
-// Nombres que football-data.org usa de forma distinta a nuestra BD
-// Los valores deben coincidir con normalize(nombre en BD)
-const FD_NAME_MAP: Record<string, string> = {
-  // América
-  'united states': 'usa',
-  // Europa
-  'czechia': 'czech republic',
-  'republic of ireland': 'ireland',
-  'bosnia and herzegovina': 'bosnia & herzegovina',
-  'bosnia-herzegovina': 'bosnia & herzegovina',
-  // Asia
-  'korea republic': 'south korea',
-  'ir iran': 'iran',
-  'china pr': 'china',
-  'united arab emirates': 'uae',
-  // África
-  "cote d'ivoire": 'ivory coast',
-  'congo dr': 'dr congo',
-  'democratic republic of congo': 'dr congo',
-}
-
-function normalize(name: string): string {
-  return name
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')  // elimina acentos
-}
-
-function resolveTeamName(name: string): string {
-  const n = normalize(name)
-  return FD_NAME_MAP[n] ?? n
 }
 
 export async function syncResults(): Promise<SyncReport> {
@@ -49,7 +16,11 @@ export async function syncResults(): Promise<SyncReport> {
   const finished = await fetchFinishedMatches()
   if (finished.length === 0) return report
 
-  // 2. Mapa nombre de equipo → id en nuestra BD
+  // 2. Mapa nombre de equipo → id en nuestra BD (normalizado, accent-insensitive)
+  function normalize(name: string): string {
+    return name.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
+  }
+
   const { data: teams } = await supabase.from('teams').select('id, name')
   const byName: Record<string, number> = {}
   for (const t of teams ?? []) byName[normalize(t.name)] = t.id
