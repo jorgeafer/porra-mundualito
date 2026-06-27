@@ -113,7 +113,23 @@ export async function POST() {
       await supabase.from('teams').update({ group_name: groupLetter }).eq('name', name)
     }
 
-    // 5. Solo insertar partidos que aún no existen en BD (por combinación de equipos)
+    // 5. Borrar partidos con equipos sin nombre real (códigos de clasificación como W74, L3)
+    const { data: allTeamsInDB } = await supabase.from('teams').select('id, name')
+    const qualifierTeamIds = (allTeamsInDB ?? [])
+      .filter(t => /^[WL]\d+$/.test(t.name))
+      .map(t => t.id)
+
+    if (qualifierTeamIds.length > 0) {
+      await supabase
+        .from('matches')
+        .delete()
+        .or(
+          qualifierTeamIds.map(id => `home_team_id.eq.${id},away_team_id.eq.${id}`).join(',')
+        )
+      await supabase.from('teams').delete().in('id', qualifierTeamIds)
+    }
+
+    // 6. Solo insertar partidos que aún no existen en BD (por combinación de equipos)
     // No tocar partidos ya jugados ni sus resultados
     const { data: existingMatches } = await supabase
       .from('matches')
