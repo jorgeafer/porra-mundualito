@@ -40,6 +40,7 @@ export const FD_NAME_MAP: Record<string, string> = {
   "cote d'ivoire": 'ivory coast',
   'congo dr': 'dr congo',
   'democratic republic of congo': 'dr congo',
+  'cape verde islands': 'cape verde',
 }
 
 export function resolveTeamName(name: string): string {
