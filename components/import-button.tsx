@@ -15,7 +15,7 @@ export default function ImportButton() {
       const res = await fetch('/api/import-wc', { method: 'POST' })
       const json = await res.json()
       if (!res.ok) throw new Error(json.error ?? 'Error desconocido')
-      setMsg(`Importados ${json.teams} equipos y ${json.matches} partidos.`)
+      setMsg(JSON.stringify(json, null, 2))
       setState('success')
     } catch (err) {
       setMsg(err instanceof Error ? err.message : String(err))
@@ -33,9 +33,9 @@ export default function ImportButton() {
         {state === 'loading' ? 'Importando…' : 'Importar desde WC2026 API'}
       </button>
       {msg && (
-        <p className={`text-sm ${state === 'error' ? 'text-red-600' : 'text-green-600'}`}>
+        <pre className={`text-xs mt-2 whitespace-pre-wrap break-all max-h-96 overflow-y-auto bg-gray-50 p-2 rounded border ${state === 'error' ? 'text-red-600' : 'text-green-700'}`}>
           {msg}
-        </p>
+        </pre>
       )}
     </div>
   )
