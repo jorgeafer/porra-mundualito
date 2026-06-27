@@ -47,16 +47,28 @@ export function resolveTeamName(name: string): string {
   return FD_NAME_MAP[n] ?? n
 }
 
+// Variant with guaranteed non-null team names (after filtering out TBD matches)
+export type FDMatchKnown = Omit<FDMatch, 'homeTeam' | 'awayTeam'> & {
+  homeTeam: { name: string; shortName: string; tla: string }
+  awayTeam: { name: string; shortName: string; tla: string }
+}
+
 // TBD/placeholder team names from football-data.org for knockout rounds
 const TBD_NAMES = new Set(['tbd', 'to be determined', '', 'winner match', 'loser match'])
 
-export function isTBDTeam(team: { name: string | null; shortName: string | null; tla: string | null }): boolean {
+function isTBDTeam(team: { name: string | null }): boolean {
   if (!team.name) return true
   const n = normalize(team.name)
   if (TBD_NAMES.has(n)) return true
   // Patterns like "Winner Match 1", "Loser Match 2", "Winner Group A"
   if (/^(winner|loser|w|l)\s*(match|group)?\s*\d*[a-z]?$/i.test(team.name.trim())) return true
   return false
+}
+
+export function filterKnownMatches(matches: FDMatch[]): FDMatchKnown[] {
+  return matches.filter(
+    m => !isTBDTeam(m.homeTeam) && !isTBDTeam(m.awayTeam)
+  ) as FDMatchKnown[]
 }
 
 const STAGE_MAP: Record<string, string> = {

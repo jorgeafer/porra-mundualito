@@ -26,17 +26,21 @@ export async function syncResults(): Promise<SyncReport> {
   for (const t of teams ?? []) byName[normalize(t.name)] = t.id
 
   for (const m of finished) {
+    // fetchFinishedMatches ya filtra partidos sin resultado; los nombres pueden ser null
+    // en teoría para partidos terminados siempre hay nombre, pero lo guardamos
+    if (!m.homeTeam.name || !m.awayTeam.name) continue
+
     // Intentar casar por name, shortName y tla (normalizando acentos y aplicando alias)
-    const homeId = (m.homeTeam.name ? byName[resolveTeamName(m.homeTeam.name)] : undefined)
+    const homeId = byName[resolveTeamName(m.homeTeam.name)]
       ?? (m.homeTeam.shortName ? byName[resolveTeamName(m.homeTeam.shortName)] : undefined)
       ?? (m.homeTeam.tla ? byName[resolveTeamName(m.homeTeam.tla)] : undefined)
-    const awayId = (m.awayTeam.name ? byName[resolveTeamName(m.awayTeam.name)] : undefined)
+    const awayId = byName[resolveTeamName(m.awayTeam.name)]
       ?? (m.awayTeam.shortName ? byName[resolveTeamName(m.awayTeam.shortName)] : undefined)
       ?? (m.awayTeam.tla ? byName[resolveTeamName(m.awayTeam.tla)] : undefined)
 
     if (!homeId || !awayId) {
-      const hResolved = m.homeTeam.name ? resolveTeamName(m.homeTeam.name) : '(null)'
-      const aResolved = m.awayTeam.name ? resolveTeamName(m.awayTeam.name) : '(null)'
+      const hResolved = resolveTeamName(m.homeTeam.name)
+      const aResolved = resolveTeamName(m.awayTeam.name)
       console.warn(`[sync-results] equipo no encontrado — home: "${m.homeTeam.name}" (→"${hResolved}") away: "${m.awayTeam.name}" (→"${aResolved}")`)
       continue
     }

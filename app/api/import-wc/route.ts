@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import {
   fetchAllWCMatches,
-  isTBDTeam,
+  filterKnownMatches,
   normalizeFDStage,
   normalizeFDGroup,
   FD_NAME_MAP,
@@ -30,35 +30,29 @@ export async function POST() {
   try {
     const allMatches = await fetchAllWCMatches()
 
-    // Solo importar partidos con equipos reales (no TBD ni placeholders)
-    const knownMatches = allMatches.filter(
-      m => !isTBDTeam(m.homeTeam) && !isTBDTeam(m.awayTeam)
-    )
+    // Solo importar partidos con equipos reales (no TBD ni null)
+    const knownMatches = filterKnownMatches(allMatches)
 
     if (knownMatches.length === 0) {
       return NextResponse.json({ ok: true, teams: 0, inserted: 0, skipped: 0 })
     }
 
-    // 1. Extraer nombres de equipo únicos (normalizados a nuestro mapeado)
+    // 1. Extraer nombres de equipo únicos
     const rawNames = [...new Set([
-      ...knownMatches.map(m => m.homeTeam.name!),
-      ...knownMatches.map(m => m.awayTeam.name!),
+      ...knownMatches.map(m => m.homeTeam.name),
+      ...knownMatches.map(m => m.awayTeam.name),
     ])]
 
     // Para cada nombre FD, determinar el nombre canónico en DB
-    // Si está en FD_NAME_MAP, el canonical es la versión capitalizada del mapeado
-    // Si no, usamos el nombre original de FD
     const CANONICAL: Record<string, string> = {}
     for (const fdName of rawNames) {
       const normalized = fdName.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
       const mapped = FD_NAME_MAP[normalized]
       if (mapped) {
-        // Capitalize first letter of each word for display
         CANONICAL[fdName] = mapped
           .split(' ')
           .map(w => w.charAt(0).toUpperCase() + w.slice(1))
           .join(' ')
-          // Special cases
           .replace('Usa', 'USA')
           .replace('Uae', 'UAE')
           .replace('Dr ', 'DR ')
@@ -69,15 +63,14 @@ export async function POST() {
 
     const canonicalNames = [...new Set(Object.values(CANONICAL))]
 
-    // 2. Derivar código de 3 letras para cada equipo
+    // 2. Derivar código de 3 letras (preferir TLA de football-data.org)
     function nameToCode(name: string): string {
-      // Try TLA from first matched FD team
       const fdTeam = knownMatches
         .flatMap(m => [
-          { fdName: m.homeTeam.name ?? '', tla: m.homeTeam.tla },
-          { fdName: m.awayTeam.name ?? '', tla: m.awayTeam.tla },
+          { fdName: m.homeTeam.name, tla: m.homeTeam.tla },
+          { fdName: m.awayTeam.name, tla: m.awayTeam.tla },
         ])
-        .find(t => t.fdName && CANONICAL[t.fdName] === name)
+        .find(t => CANONICAL[t.fdName] === name)
       if (fdTeam?.tla && /^[A-Z]{3}$/.test(fdTeam.tla)) return fdTeam.tla
 
       const words = name.trim().split(/\s+/)
@@ -86,15 +79,13 @@ export async function POST() {
       return words.slice(0, 3).map(w => w[0]).join('').toUpperCase()
     }
 
-    // 3. Mapear group por equipo canónico
+    // 3. Mapear grupo por equipo canónico
     const teamGroupMap: Record<string, string> = {}
     for (const m of knownMatches) {
       const g = normalizeFDGroup(m.group)
       if (g) {
-        const homeName = m.homeTeam.name ? CANONICAL[m.homeTeam.name] : undefined
-        const awayName = m.awayTeam.name ? CANONICAL[m.awayTeam.name] : undefined
-        if (homeName) teamGroupMap[homeName] = g
-        if (awayName) teamGroupMap[awayName] = g
+        teamGroupMap[CANONICAL[m.homeTeam.name]] = g
+        teamGroupMap[CANONICAL[m.awayTeam.name]] = g
       }
     }
 
@@ -123,7 +114,7 @@ export async function POST() {
 
     if (teamsError) throw new Error(`Equipos: ${teamsError.message}`)
 
-    // Actualizar group_name de equipos ya existentes (por nombre)
+    // Actualizar group_name en equipos ya existentes (por nombre)
     for (const [name, groupLetter] of Object.entries(teamGroupMap)) {
       await admin.from('teams').update({ group_name: groupLetter }).eq('name', name)
     }
@@ -136,16 +127,12 @@ export async function POST() {
     // 6. Construir partidos a insertar
     const matchesToInsert = knownMatches
       .map(m => {
-        const homeCanonical = m.homeTeam.name ? CANONICAL[m.homeTeam.name] : undefined
-        const awayCanonical = m.awayTeam.name ? CANONICAL[m.awayTeam.name] : undefined
-        if (!homeCanonical || !awayCanonical) return null
+        const homeCanonical = CANONICAL[m.homeTeam.name]
+        const awayCanonical = CANONICAL[m.awayTeam.name]
 
         const homeId = byName[homeCanonical.toLowerCase()]
         const awayId = byName[awayCanonical.toLowerCase()]
         if (!homeId || !awayId) return null
-
-        const stage = normalizeFDStage(m.stage)
-        const groupLetter = normalizeFDGroup(m.group)
 
         const isFinished = m.status === 'FINISHED' &&
           m.score.fullTime.home !== null &&
@@ -155,8 +142,8 @@ export async function POST() {
           home_team_id: homeId,
           away_team_id: awayId,
           match_date: m.utcDate,
-          stage,
-          group_name: groupLetter,
+          stage: normalizeFDStage(m.stage),
+          group_name: normalizeFDGroup(m.group),
           venue: m.venue ?? null,
           home_score: isFinished ? m.score.fullTime.home : null,
           away_score: isFinished ? m.score.fullTime.away : null,
