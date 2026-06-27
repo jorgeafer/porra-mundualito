@@ -145,13 +145,17 @@ export async function POST() {
     for (const t of allTeams ?? []) byName[t.name.toLowerCase()] = t.id
 
     // 6. Construir partidos
+    const missingTeams: string[] = []
     const matchesToInsert = knownMatches
       .map(m => {
         const homeCanonical = CANONICAL[m.homeTeam.name]
         const awayCanonical = CANONICAL[m.awayTeam.name]
         const homeId = byName[homeCanonical.toLowerCase()]
         const awayId = byName[awayCanonical.toLowerCase()]
-        if (!homeId || !awayId) return null
+        if (!homeId || !awayId) {
+          missingTeams.push(`${m.homeTeam.name}(${homeCanonical})=${homeId ?? 'NOT FOUND'} vs ${m.awayTeam.name}(${awayCanonical})=${awayId ?? 'NOT FOUND'}`)
+          return null
+        }
 
         const isFinished = m.status === 'FINISHED' &&
           m.score.fullTime.home !== null &&
@@ -180,10 +184,17 @@ export async function POST() {
       (existingMatches ?? []).map(m => `${m.home_team_id}-${m.away_team_id}`)
     )
 
-    const newMatches = matchesToInsert.filter(
-      m => !existingPairs.has(`${m.home_team_id}-${m.away_team_id}`) &&
-           !existingPairs.has(`${m.away_team_id}-${m.home_team_id}`)
-    )
+    const skippedMatches: string[] = []
+    const newMatches = matchesToInsert.filter(m => {
+      const dup = existingPairs.has(`${m.home_team_id}-${m.away_team_id}`) ||
+                  existingPairs.has(`${m.away_team_id}-${m.home_team_id}`)
+      if (dup) {
+        const home = allTeams?.find(t => t.id === m.home_team_id)?.name ?? m.home_team_id
+        const away = allTeams?.find(t => t.id === m.away_team_id)?.name ?? m.away_team_id
+        skippedMatches.push(`${home} vs ${away}`)
+      }
+      return !dup
+    })
 
     if (newMatches.length > 0) {
       const { error: matchesError } = await admin.from('matches').insert(newMatches)
@@ -195,7 +206,8 @@ export async function POST() {
       duplicatesRemoved,
       newTeams: newTeams.length,
       inserted: newMatches.length,
-      skipped: matchesToInsert.length - newMatches.length,
+      skippedMatches,
+      missingTeams,
     })
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err)
