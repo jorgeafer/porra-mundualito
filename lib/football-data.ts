@@ -2,8 +2,8 @@ const BASE_URL = 'https://api.football-data.org/v4'
 const COMPETITION_CODE = 'WC'
 
 export interface FDMatch {
-  homeTeam: { name: string; shortName: string; tla: string }
-  awayTeam: { name: string; shortName: string; tla: string }
+  homeTeam: { name: string | null; shortName: string | null; tla: string | null }
+  awayTeam: { name: string | null; shortName: string | null; tla: string | null }
   score: {
     fullTime: { home: number | null; away: number | null }
   }
@@ -50,7 +50,8 @@ export function resolveTeamName(name: string): string {
 // TBD/placeholder team names from football-data.org for knockout rounds
 const TBD_NAMES = new Set(['tbd', 'to be determined', '', 'winner match', 'loser match'])
 
-export function isTBDTeam(team: { name: string; shortName: string; tla: string }): boolean {
+export function isTBDTeam(team: { name: string | null; shortName: string | null; tla: string | null }): boolean {
+  if (!team.name) return true
   const n = normalize(team.name)
   if (TBD_NAMES.has(n)) return true
   // Patterns like "Winner Match 1", "Loser Match 2", "Winner Group A"

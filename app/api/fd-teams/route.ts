@@ -22,17 +22,19 @@ export async function GET(req: NextRequest) {
 
   const matches = await fetchFinishedMatches()
 
-  const fdNames = new Map<string, { name: string; shortName: string; tla: string }>()
+  const fdNames = new Map<string, { name: string | null; shortName: string | null; tla: string | null }>()
   for (const m of matches) {
-    fdNames.set(m.homeTeam.name, m.homeTeam)
-    fdNames.set(m.awayTeam.name, m.awayTeam)
+    if (m.homeTeam.name) fdNames.set(m.homeTeam.name, m.homeTeam)
+    if (m.awayTeam.name) fdNames.set(m.awayTeam.name, m.awayTeam)
   }
 
   const result = [...fdNames.values()].map(t => ({
     fd_name: t.name,
     fd_shortName: t.shortName,
     fd_tla: t.tla,
-    found_in_db: dbNames.has(t.name.toLowerCase()) || dbNames.has(t.shortName.toLowerCase()) || dbNames.has(t.tla.toLowerCase()),
+    found_in_db: (t.name ? dbNames.has(t.name.toLowerCase()) : false)
+      || (t.shortName ? dbNames.has(t.shortName.toLowerCase()) : false)
+      || (t.tla ? dbNames.has(t.tla.toLowerCase()) : false),
   })).sort((a, b) => Number(a.found_in_db) - Number(b.found_in_db))
 
   return NextResponse.json({ total: result.length, teams: result })

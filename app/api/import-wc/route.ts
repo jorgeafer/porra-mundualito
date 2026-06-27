@@ -41,8 +41,8 @@ export async function POST() {
 
     // 1. Extraer nombres de equipo únicos (normalizados a nuestro mapeado)
     const rawNames = [...new Set([
-      ...knownMatches.map(m => m.homeTeam.name),
-      ...knownMatches.map(m => m.awayTeam.name),
+      ...knownMatches.map(m => m.homeTeam.name!),
+      ...knownMatches.map(m => m.awayTeam.name!),
     ])]
 
     // Para cada nombre FD, determinar el nombre canónico en DB
@@ -74,10 +74,10 @@ export async function POST() {
       // Try TLA from first matched FD team
       const fdTeam = knownMatches
         .flatMap(m => [
-          { fdName: m.homeTeam.name, tla: m.homeTeam.tla },
-          { fdName: m.awayTeam.name, tla: m.awayTeam.tla },
+          { fdName: m.homeTeam.name ?? '', tla: m.homeTeam.tla },
+          { fdName: m.awayTeam.name ?? '', tla: m.awayTeam.tla },
         ])
-        .find(t => CANONICAL[t.fdName] === name)
+        .find(t => t.fdName && CANONICAL[t.fdName] === name)
       if (fdTeam?.tla && /^[A-Z]{3}$/.test(fdTeam.tla)) return fdTeam.tla
 
       const words = name.trim().split(/\s+/)
@@ -91,8 +91,8 @@ export async function POST() {
     for (const m of knownMatches) {
       const g = normalizeFDGroup(m.group)
       if (g) {
-        const homeName = CANONICAL[m.homeTeam.name]
-        const awayName = CANONICAL[m.awayTeam.name]
+        const homeName = m.homeTeam.name ? CANONICAL[m.homeTeam.name] : undefined
+        const awayName = m.awayTeam.name ? CANONICAL[m.awayTeam.name] : undefined
         if (homeName) teamGroupMap[homeName] = g
         if (awayName) teamGroupMap[awayName] = g
       }
@@ -136,8 +136,8 @@ export async function POST() {
     // 6. Construir partidos a insertar
     const matchesToInsert = knownMatches
       .map(m => {
-        const homeCanonical = CANONICAL[m.homeTeam.name]
-        const awayCanonical = CANONICAL[m.awayTeam.name]
+        const homeCanonical = m.homeTeam.name ? CANONICAL[m.homeTeam.name] : undefined
+        const awayCanonical = m.awayTeam.name ? CANONICAL[m.awayTeam.name] : undefined
         if (!homeCanonical || !awayCanonical) return null
 
         const homeId = byName[homeCanonical.toLowerCase()]

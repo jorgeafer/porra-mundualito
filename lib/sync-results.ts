@@ -27,16 +27,16 @@ export async function syncResults(): Promise<SyncReport> {
 
   for (const m of finished) {
     // Intentar casar por name, shortName y tla (normalizando acentos y aplicando alias)
-    const homeId = byName[resolveTeamName(m.homeTeam.name)]
-      ?? byName[resolveTeamName(m.homeTeam.shortName)]
-      ?? byName[resolveTeamName(m.homeTeam.tla)]
-    const awayId = byName[resolveTeamName(m.awayTeam.name)]
-      ?? byName[resolveTeamName(m.awayTeam.shortName)]
-      ?? byName[resolveTeamName(m.awayTeam.tla)]
+    const homeId = (m.homeTeam.name ? byName[resolveTeamName(m.homeTeam.name)] : undefined)
+      ?? (m.homeTeam.shortName ? byName[resolveTeamName(m.homeTeam.shortName)] : undefined)
+      ?? (m.homeTeam.tla ? byName[resolveTeamName(m.homeTeam.tla)] : undefined)
+    const awayId = (m.awayTeam.name ? byName[resolveTeamName(m.awayTeam.name)] : undefined)
+      ?? (m.awayTeam.shortName ? byName[resolveTeamName(m.awayTeam.shortName)] : undefined)
+      ?? (m.awayTeam.tla ? byName[resolveTeamName(m.awayTeam.tla)] : undefined)
 
     if (!homeId || !awayId) {
-      const hResolved = resolveTeamName(m.homeTeam.name)
-      const aResolved = resolveTeamName(m.awayTeam.name)
+      const hResolved = m.homeTeam.name ? resolveTeamName(m.homeTeam.name) : '(null)'
+      const aResolved = m.awayTeam.name ? resolveTeamName(m.awayTeam.name) : '(null)'
       console.warn(`[sync-results] equipo no encontrado — home: "${m.homeTeam.name}" (→"${hResolved}") away: "${m.awayTeam.name}" (→"${aResolved}")`)
       continue
     }
