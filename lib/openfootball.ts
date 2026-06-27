@@ -64,9 +64,9 @@ export function nameToCode(name: string): string {
   return words.slice(0, 3).map(w => w[0]).join('').toUpperCase()
 }
 
-// Qualifier codes like "W74" or "L101" mean winner/loser of a match not yet played
+// Qualifier codes: "W74"/"L101" (winner/loser of match) or "2A"/"1B"/"3A/B/C/D/F" (group position)
 export function isQualifierCode(name: string): boolean {
-  return /^[WL]\d+$/.test(name)
+  return /^[WL]\d+$/.test(name) || /^\d[A-Z](\/[A-Z])*$/.test(name)
 }
 
 const STAGE_MAP: Record<string, string> = {
