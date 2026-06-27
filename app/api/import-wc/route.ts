@@ -113,16 +113,31 @@ export async function POST() {
       await supabase.from('teams').update({ group_name: groupLetter }).eq('name', name)
     }
 
-    // 5. Borrar partidos existentes y reimportar
-    await supabase.from('matches').delete().neq('id', 0)
+    // 5. Solo insertar partidos que aún no existen en BD (por combinación de equipos)
+    // No tocar partidos ya jugados ni sus resultados
+    const { data: existingMatches } = await supabase
+      .from('matches')
+      .select('home_team_id, away_team_id')
 
-    const { error: matchesError } = await supabase.from('matches').insert(matchesToInsert)
-    if (matchesError) throw new Error(`Partidos: ${matchesError.message}`)
+    const existingPairs = new Set(
+      (existingMatches ?? []).map(m => `${m.home_team_id}-${m.away_team_id}`)
+    )
+
+    const newMatches = matchesToInsert.filter(
+      m => !existingPairs.has(`${m.home_team_id}-${m.away_team_id}`) &&
+           !existingPairs.has(`${m.away_team_id}-${m.home_team_id}`)
+    )
+
+    if (newMatches.length > 0) {
+      const { error: matchesError } = await supabase.from('matches').insert(newMatches)
+      if (matchesError) throw new Error(`Partidos: ${matchesError.message}`)
+    }
 
     return NextResponse.json({
       ok: true,
       teams: teamsToInsert.length,
-      matches: matchesToInsert.length,
+      inserted: newMatches.length,
+      skipped: matchesToInsert.length - newMatches.length,
     })
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err)
