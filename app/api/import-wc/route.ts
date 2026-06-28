@@ -175,25 +175,37 @@ export async function POST() {
       })
       .filter((m): m is NonNullable<typeof m> => m !== null)
 
-    // 7. Solo insertar los que no existen ya (dedup por par de equipos)
+    // 7. Dedup y corrección de stage en partidos existentes
     const { data: existingMatches } = await admin
       .from('matches')
-      .select('home_team_id, away_team_id')
+      .select('id, home_team_id, away_team_id, stage')
 
-    const existingPairs = new Set(
-      (existingMatches ?? []).map(m => `${m.home_team_id}-${m.away_team_id}`)
+    const existingByPair = new Map(
+      (existingMatches ?? []).map(m => [`${m.home_team_id}-${m.away_team_id}`, m])
+    )
+    // También índice invertido para partidos con equipos en orden opuesto
+    const existingByPairReversed = new Map(
+      (existingMatches ?? []).map(m => [`${m.away_team_id}-${m.home_team_id}`, m])
     )
 
+    let stageFixed = 0
     const skippedMatches: string[] = []
     const newMatches = matchesToInsert.filter(m => {
-      const dup = existingPairs.has(`${m.home_team_id}-${m.away_team_id}`) ||
-                  existingPairs.has(`${m.away_team_id}-${m.home_team_id}`)
-      if (dup) {
+      const existing = existingByPair.get(`${m.home_team_id}-${m.away_team_id}`)
+        ?? existingByPairReversed.get(`${m.home_team_id}-${m.away_team_id}`)
+      if (existing) {
         const home = allTeams?.find(t => t.id === m.home_team_id)?.name ?? m.home_team_id
         const away = allTeams?.find(t => t.id === m.away_team_id)?.name ?? m.away_team_id
         skippedMatches.push(`${home} vs ${away}`)
+        // Corregir stage si está mal (ej. round_of_32 que se guardó como 'group')
+        if (existing.stage !== m.stage) {
+          admin.from('matches').update({ stage: m.stage, group_name: m.group_name })
+            .eq('id', existing.id)
+            .then(() => { stageFixed++ })
+        }
+        return false
       }
-      return !dup
+      return true
     })
 
     if (newMatches.length > 0) {
@@ -207,6 +219,7 @@ export async function POST() {
       newTeams: newTeams.length,
       inserted: newMatches.length,
       skippedMatches,
+      stageFixed,
       missingTeams,
     })
   } catch (err) {

@@ -75,10 +75,16 @@ export function filterKnownMatches(matches: FDMatch[]): FDMatchKnown[] {
 const STAGE_MAP: Record<string, string> = {
   'group_stage': 'group',
   'round_of_32': 'round_of_32',
+  'last_32': 'round_of_32',
   'round_of_16': 'round_of_16',
+  'last_16': 'round_of_16',
   'quarter_finals': 'quarter',
+  'quarterfinals': 'quarter',
   'semi_finals': 'semi',
+  'semifinals': 'semi',
   'third_place': 'third_place',
+  'third_place_playoff': 'third_place',
+  'play_off_3rd_place': 'third_place',
   'final': 'final',
 }
 
