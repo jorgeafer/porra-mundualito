@@ -5,8 +5,8 @@ import PredictionCard from './prediction-card'
 import type { MatchWithTeams, Prediction } from '@/types/database'
 
 const STAGES = [
-  { key: 'group', label: 'Grupos' },
   { key: 'round_of_32', label: 'Ronda 32' },
+  { key: 'group', label: 'Grupos' },
   { key: 'round_of_16', label: 'Octavos' },
   { key: 'quarter', label: 'Cuartos' },
   { key: 'semi', label: 'Semis' },
