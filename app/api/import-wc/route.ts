@@ -161,6 +161,11 @@ export async function POST() {
           m.score.fullTime.home !== null &&
           m.score.fullTime.away !== null
 
+        // Usar extraTime cuando esté disponible (prórroga/penaltis)
+        const et = m.score.extraTime
+        const homeResult = et?.home !== null && et?.home !== undefined ? et.home : m.score.fullTime.home
+        const awayResult = et?.away !== null && et?.away !== undefined ? et.away : m.score.fullTime.away
+
         return {
           home_team_id: homeId,
           away_team_id: awayId,
@@ -168,8 +173,8 @@ export async function POST() {
           stage: normalizeFDStage(m.stage),
           group_name: normalizeFDGroup(m.group),
           venue: m.venue ?? null,
-          home_score: isFinished ? m.score.fullTime.home : null,
-          away_score: isFinished ? m.score.fullTime.away : null,
+          home_score: isFinished ? homeResult : null,
+          away_score: isFinished ? awayResult : null,
           status: (isFinished ? 'finished' : 'scheduled') as 'scheduled' | 'finished',
         }
       })

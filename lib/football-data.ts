@@ -6,6 +6,9 @@ export interface FDMatch {
   awayTeam: { name: string | null; shortName: string | null; tla: string | null }
   score: {
     fullTime: { home: number | null; away: number | null }
+    // Para partidos con prórroga: contiene el marcador acumulado al final de la prórroga.
+    // En penaltis sin goles en prorroga, extra_time == fullTime (empate).
+    extraTime: { home: number | null; away: number | null } | null
   }
   status: string
   utcDate: string

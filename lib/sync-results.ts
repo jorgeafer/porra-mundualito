@@ -45,8 +45,12 @@ export async function syncResults(): Promise<SyncReport> {
       continue
     }
 
-    let homeScore = m.score.fullTime.home!
-    let awayScore = m.score.fullTime.away!
+    // Usar extraTime cuando esté disponible (prórroga/penaltis):
+    // fullTime = 90 min, extraTime = resultado final tras prórroga.
+    // Si el partido fue a penaltis sin goles en prórroga, extraTime == fullTime (empate).
+    const et = m.score.extraTime
+    let homeScore = (et?.home !== null && et?.home !== undefined ? et.home : m.score.fullTime.home)!
+    let awayScore = (et?.away !== null && et?.away !== undefined ? et.away : m.score.fullTime.away)!
 
     // 3. Buscar el partido en BD — probar orden normal y luego invertido
     let { data: match } = await supabase
