@@ -161,10 +161,10 @@ export async function POST() {
           m.score.fullTime.home !== null &&
           m.score.fullTime.away !== null
 
-        // Usar extraTime cuando esté disponible (prórroga/penaltis)
+        // extraTime = goles en prórroga (no acumulado). Marcador final = fullTime + extraTime.
         const et = m.score.extraTime
-        const homeResult = et?.home !== null && et?.home !== undefined ? et.home : m.score.fullTime.home
-        const awayResult = et?.away !== null && et?.away !== undefined ? et.away : m.score.fullTime.away
+        const homeResult = m.score.fullTime.home! + (et?.home ?? 0)
+        const awayResult = m.score.fullTime.away! + (et?.away ?? 0)
 
         return {
           home_team_id: homeId,
